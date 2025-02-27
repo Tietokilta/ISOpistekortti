@@ -12,5 +12,19 @@ app.use(cors())
 app.use(express.json())
 app.use('/', tasksRouter)
 
+const pool = require("./db");
+
+async function testConnection() {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    console.log("Database Connected:", result.rows);
+  } catch (err) {
+    console.error("Database Connection Error:", err);
+  }
+}
+
+testConnection();
+
+
 
 module.exports = app
