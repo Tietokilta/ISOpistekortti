@@ -8,23 +8,18 @@ const middleWare = require('./utils/middleware')
 const tasksRouter = require('./controllers/tasks')
 
 app.use(cors())
-//app.use(express.static('dist'))
+app.use(express.static('dist'))
 app.use(express.json())
-app.use('/', tasksRouter)
+app.use(middleWare.requestLogger)
 
-const pool = require("./db");
-
-async function testConnection() {
-  try {
-    const result = await pool.query("SELECT NOW()");
-    console.log("Database Connected:", result.rows);
-  } catch (err) {
-    console.error("Database Connection Error:", err);
-  }
-}
-
-testConnection();
+app.use(express.json())
+app.use('/api/tasks', tasksRouter)
 
 
+
+//tähän väliin 
+
+app.use(middleWare.unknownEndpoint)
+app.use(middleWare.errorHandler)
 
 module.exports = app
