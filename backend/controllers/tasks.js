@@ -1,6 +1,6 @@
 const tasksRouter = require('express').Router()
-const { default: knex } = require('knex');
-const { request, response } = require('../app');
+//const { default: knex } = require('knex');
+require('../app');
 const pool = require("../db");
 
 
