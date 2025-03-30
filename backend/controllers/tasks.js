@@ -32,8 +32,14 @@ tasksRouter.delete('/:id', async (request, response) => {
   response.status(204).end()
 })
 
+tasksRouter.put('/:id', async (request, response) => {
+  const id = request.params.id
+  const title = request.body.title
+  const description = request.body.description
+  console.log(title, description)
+  await pool.query("UPDATE tasks SET title = ($1), description = ($2) WHERE id = ($3)", [title, description, id])
 
-//update
-
+  response.json({ title: title, description: description })
+})
 
 module.exports = tasksRouter
