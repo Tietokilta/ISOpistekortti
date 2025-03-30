@@ -1,5 +1,4 @@
 const tasksRouter = require('express').Router()
-//const { default: knex } = require('knex');
 require('../app');
 const pool = require("../db");
 
@@ -18,22 +17,44 @@ tasksRouter.get('/', async (request, response) => {
   response.json(result.rows)
 })
 
-//error handling puuttuu
+
 tasksRouter.post('/', async (request, response) => {
   console.log('request data: ', request.body)
-  const result = await pool.query('INSERT INTO tasks (title, description) VALUES ($1, $2)', [request.body.title, request.body.description])
-  response.status(200).json(result)
+  if (request.body.title && request.body.description) {
+    const result = await pool.query('INSERT INTO tasks (title, description) VALUES ($1, $2)', [request.body.title, request.body.description])
+    response.status(200).json(result)
+  }
+  else {
+    response.status(400).send({ error: 'Title or description missing' })
+  }
 })
 
-//error handling puuttuu
 tasksRouter.delete('/:id', async (request, response) => {
   const id = request.params.id
-  await pool.query('DELETE FROM tasks WHERE id = ($1)', [id])
-  response.status(204).end()
+  const result = await pool.query('DELETE FROM tasks WHERE id = ($1)', [id])
+  console.log(result.rowCount);
+  if (result.rowCount === 0) {
+    response.status(400).end()
+  }
+  else {
+    response.status(204).end()
+  }
 })
 
+tasksRouter.put('/:id', async (request, response) => {
+  const id = request.params.id
+  const title = request.body.title
+  const description = request.body.description
 
-//update
-
+  const result = await pool.query("UPDATE tasks SET title = ($1), description = ($2) WHERE id = ($3)", [title, description, id])
+  
+  if (result.rowCount === 0) {
+    console.log("ERROR: Unknown ID");
+    response.status(400).send({ error: 'Unknown ID' })
+  }
+  else {
+    response.json({ title: title, description: description })
+  }
+})
 
 module.exports = tasksRouter
