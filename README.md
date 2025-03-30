@@ -8,7 +8,7 @@ install docker
 run "sudo docker-compose up -d"
 
 
-Run "psql -h localhost -U myuser -d mydatabase" in backend repo to get local database running
+Run "docker compose exec postgres psql -h localhost -U myuser -d mydatabase" in backend repo to get local database running
 npx knex migrate:latest to migrate database
 npx knex seed:run to fill database with mock data
 Docker desktop needs to be running? emt lol
