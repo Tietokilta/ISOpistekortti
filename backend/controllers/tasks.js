@@ -12,7 +12,7 @@ testConnection();
 //tähän täytyy lisätä tapa jolla saadaan lista niistä tehtävistä jotkä käyttäjä on tehnyt (ehkä get /id)
 tasksRouter.get('/', async (request, response) => {
   const result = await pool.query('SELECT * FROM tasks')
-  //console.log(result.rows)
+  // console.log(result.rows)
 
   response.json(result.rows)
 })
