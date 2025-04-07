@@ -1,14 +1,31 @@
 # ISOpistekortti
-How to get backend running (toimii ehk lmao) 
+### How to get the backend running for development
+Pre-requisites [Node.js v22](https://nodejs.org/en/download) and [Docker](https://docs.docker.com/get-started/get-docker/)
 
-Go into ISOpistekortti/backend directory and run npm install to download all the needed node packages, you will need npm (node packet manager) so make sure you have it 
+```bash
+# navigate to backend directory
+cd backend
 
-create .env file and add a port
-install docker
-run "sudo docker-compose up -d"
+# install dependencies
+npm install
 
+# setup .env file
+cp .env.example .env
 
-Run "docker compose exec postgres psql -h localhost -U myuser -d mydatabase" in backend repo to get local database running
-npx knex migrate:latest to migrate database
-npx knex seed:run to fill database with mock data
-Docker desktop needs to be running? emt lol
+# start db
+npm run db:start
+
+# migrate schemas
+npm run db:migrate
+
+# seed database
+npm run db:seed
+
+# run dev server
+npm run dev
+```
+
+To open a psql session into the database, run
+```bash
+docker compose exec postgres psql -h localhost -U myuser -d mydatabase
+```
