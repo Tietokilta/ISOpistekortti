@@ -16,10 +16,9 @@ app.use(middleWare.requestLogger)
 
 app.use('/api/login', loginRouter)
 app.use('/api/tasks', tasksRouter)
+
 // All actions that require authentication should be placed after this middleware
 app.use(middleWare.checkAuthToken)
-
-
 
 
 //tähän väliin 
