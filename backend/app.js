@@ -16,10 +16,18 @@ app.use(middleWare.requestLogger)
 
 app.use('/api/login', loginRouter)
 app.use('/api/tasks', tasksRouter)
+<<<<<<< HEAD
 
 // All actions that require authentication should be placed after this middleware
 app.use(middleWare.checkAuthToken)
 
+=======
+// All actions that require authentication should be placed after this middleware
+app.use(middleWare.checkAuthToken)
+
+
+
+>>>>>>> afc698b (feat: login form send post request)
 
 //tähän väliin 
 
