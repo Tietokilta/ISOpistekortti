@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link,
+  useParams,
+  useNavigate
+} from 'react-router-dom'
+
 import { Card }  from './components/Card';
 import { Login } from './components/Login';
+import { AdminFront } from './components/Adminfront'
+import { Logout } from './components/Logout';
 import taskService from './services/tasks'
 
 
-function App() {
+const UserFront = ({ login, setLogin }) => {
   const [tasks, setTasks] = useState([])
-  const [login, setLogin] = useState(true)
-
   
   useEffect(() => {
     taskService.getAll().then(task =>
@@ -42,8 +49,22 @@ function App() {
           />
         )}
       </div>
+      <Logout setLogin={setLogin}/>
     </div>
   )}
-  }
+}
+
+const App = () => {
+  const [login, setLogin] = useState(false)
+
+  return (
+    <Router>
+      <Routes>
+        <Route path='/' element={<UserFront login={login} setLogin={setLogin}/>} />
+        <Route path='/admin' element={<AdminFront setLogin={setLogin}/>} />
+      </Routes>
+    </Router>
+  )
+}
 
 export default App
