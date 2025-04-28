@@ -8,42 +8,61 @@ const Button = ({ name, state, setState }) => {
     )
 }
 
-export function Login() {
-    const [login, setLogin] = useState(false)
+const Login = ({ login, setLogin }) => {
+    const [loginForm, setLoginForm] = useState(false)
     const [register, setRegister] = useState(false)
+    const [fullname, setFullname] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [password2, setPassword2] = useState('')
 
 
-    const handleUsernameChange = (event) => {
-        setUsername(event.target.value)
-    }
+    const handleFullnameChange = (event) => setFullname(event.target.value)
+    const handleUsernameChange = (event) => setUsername(event.target.value)
+    const handlePasswordChange = (event) => setPassword(event.target.value)
+    const handlePassword2Change = (event) => setPassword2(event.target.value)
 
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value)
-    }
-
-    const handleLogin = () => {
-        console.log(username)
-        console.log(password)
-        loginService.loginPost({ username: username, password: password })
+    const handleLogin = async () => {
+        const response = await loginService.loginPost({ username: username, password: password })
+        if (response.status === 200) {
+            setLogin(!login)
+        }
         //make a notification
     }
 
-    if (!login && !register) {
+    const handleRegister = async () => {
+        //check passwords match
+        //check username is not taken
+        //throtling?
+        const checkPassword = () => {
+            if (password === password2) {
+                return true
+            }
+            else {
+                console.log('passwords dont match')
+                return false
+            }
+        }
+        
+
+        //const response = await registerService.registerPost
+    }
+
+
+    if (!loginForm && !register) {
         return (
             <div className="p-6 rounded-2xl shadow-lg w-80 bg-white mb-4">
                 <h1 className="flex items-center justify-center font-bold">Kirjaudu sisään tai luo käyttäjä</h1>
                 <h1 className="flex items-center justify-center font-bold">Login or create a user</h1>
                 
                 <div className="flex items-center justify-center mt-6">
-                    <Button name='Login' state={login} setState={setLogin}/>
+                    <Button name='Login' state={loginForm} setState={setLoginForm}/>
                     <Button name='Create user' state={register} setState={setRegister}/>
                 </div>
             </div>
         )
     }
-    else if (login) {
+    else if (loginForm) {
         return (
             <div className="p-6 rounded-2xl shadow-lg w-80 bg-white ">
                 <h1 className='flex items-center justify-center font-bold'>LOGIN</h1>
@@ -56,7 +75,7 @@ export function Login() {
                     </div>
                 </div>
                 <div className='flex items-center justify-center'>
-                    <Button name='Back' state={login} setState={setLogin}/>
+                    <Button name='Back' state={loginForm} setState={setLoginForm}/>
                     <button className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
                         onClick={() => handleLogin()}>Ok</button>
                 </div>
@@ -70,20 +89,23 @@ export function Login() {
                 <div className='flex items-center justify-center'>
                     <div>
                         <p className='font-mono'>Name</p>
-                        <input className="border"></input>
+                        <input className="border" onChange={handleFullnameChange}></input>
                         <p className='font-mono'>Username</p>
-                        <input className="border" type='password'></input>
+                        <input className="border" type='password' onChange={handleUsernameChange}></input>
                         <p className='font-mono'>Password</p>
-                        <input className="border" type='password'></input>
+                        <input className="border" type='password' onChange={handlePasswordChange}></input>
                         <p className='font-mono'>Password again</p>
-                        <input className="border" type='password'></input>
+                        <input className="border" type='password' onChange={handlePassword2Change}></input>
                     </div>
                 </div>
                 <div className='flex items-center justify-center'>
                     <Button name='Back' state={register} setState={setRegister}/>
-                    <Button name='Ok'/>
+                    <button className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
+                        onClick={() => handleRegister()}>Ok</button>
                 </div>
             </div>
         )
     }
 }
+
+export default Login

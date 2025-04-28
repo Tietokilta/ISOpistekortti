@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 
 import { Card }  from './components/Card';
-import { Login } from './components/Login';
+import Login from './components/Login';
 import { AdminFront } from './components/Adminfront'
 import { Logout } from './components/Logout';
 import taskService from './services/tasks'
@@ -29,7 +29,7 @@ const UserFront = ({ login, setLogin }) => {
         className='flex flex-col items-center justify-center min-h-2/3 py-8'
       >
         <h1 className="text-3xl font-bold mb-4">ISOpistekortti 🤯💯</h1>
-        <Login/>
+        <Login login={login} setLogin={setLogin}/>
       </div>
     )
   }
