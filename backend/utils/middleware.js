@@ -39,9 +39,17 @@ const checkAuthToken = (request, response, next) => {
   }
 }
 
+function ignoreFavicon(req, res, next) {
+  if (req.originalUrl.includes('favicon.ico')) {
+    res.status(204).end()
+  }
+  next();
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  checkAuthToken
+  checkAuthToken,
+  ignoreFavicon
 }

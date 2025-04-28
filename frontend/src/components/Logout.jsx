@@ -3,7 +3,7 @@ import React from 'react';
 export function Logout({ setLogin }) {
   const handleLogout = () => {
     // Clear user session (example)
-    localStorage.removeItem('token'); // or whatever you store
+    //localStorage.removeItem('token'); // or whatever you store
     console.log('User logged out');
     setLogin(true);
     // Redirect if needed
