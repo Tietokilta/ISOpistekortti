@@ -1,6 +1,7 @@
 //error handling ja pyyntöjen logger tänne
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
+const { refreshTokens } = require('../controllers/auth/token_utils');
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
@@ -22,22 +23,31 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
-const checkAuthToken = (request, response, next) => {
-  const authToken = request.cookies?.authToken;
 
-  if (!authToken) {
-    return response.status(401).json({ error: 'Invalid authorization token' });
+const checkAuthToken = async (request, response, next) => {
+  const { accessToken, refreshToken } = request.cookies;
+  
+  // Try access token
+  if (accessToken) {
+    try {
+      request.user = jwt.verify(accessToken, process.env.SECRET);
+      return next();
+    } catch (err) {
+      // Expired or invalid access token, try to refresh below
+    }
   }
 
-  try {
-    const verifiedUser = jwt.verify(authToken, process.env.SECRET);
-    request.user = verifiedUser
-    next()
-
-  } catch (err) {
-    return response.status(401).json({ error: 'Invalid authorization token' });
+  if (refreshToken) {
+    const user = await refreshTokens(refreshToken, response);
+    if (user) {
+      request.user = user;
+      return next();
+    }
   }
-}
+
+  // No valid tokens
+  response.status(401).json({ error: 'Authentication required' });
+};
 
 function ignoreFavicon(req, res, next) {
   if (req.originalUrl.includes('favicon.ico')) {

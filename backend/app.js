@@ -5,8 +5,11 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const middleWare = require('./utils/middleware')
 const tasksRouter = require('./controllers/tasks')
-const loginRouter = require('./controllers/login')
 const userRouter = require('./controllers/users')
+
+const loginRouter = require('./controllers/auth/login')
+const signupRouter = require('./controllers/auth/signup')
+const logoutRouter = require('./controllers/auth/logout')
 
 app.use(cors())
 app.use(express.static('dist'))
@@ -18,6 +21,8 @@ app.use(middleWare.requestLogger)
 app.use(middleWare.ignoreFavicon)
 
 app.use('/api/login', loginRouter)
+app.use('/api/logout', logoutRouter)
+app.use('/api/signup', signupRouter)
 
 // All actions that require authentication should be placed after this middleware
 app.use(middleWare.checkAuthToken)
