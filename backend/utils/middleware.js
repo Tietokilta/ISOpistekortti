@@ -46,8 +46,16 @@ const checkAuthToken = async (request, response, next) => {
   }
 
   // No valid tokens
-  response.status(401).json({ error: 'Authentication required' });
+  return response.status(401).json({ error: 'Authentication required' });
 };
+
+const checkAdminPrivileges = async (request, response, next) => {
+  if (!request.user.is_admin) {
+    return response.status(401).json({error: 'Admin privileges required'});
+  }
+
+  return next();
+}
 
 function ignoreFavicon(req, res, next) {
   if (req.originalUrl.includes('favicon.ico')) {
@@ -61,5 +69,6 @@ module.exports = {
   unknownEndpoint,
   errorHandler,
   checkAuthToken,
+  checkAdminPrivileges,
   ignoreFavicon
 }

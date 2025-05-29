@@ -33,7 +33,7 @@ signupRouter.post('/', async (req, res) => {
     const newUser = await pool.query(
       `INSERT INTO users (username, name, "passwordHash")
        VALUES ($1, $2, $3) 
-       RETURNING id, username`,
+       RETURNING id, username, is_admin`,
       [username, name, passwordHash]
     );
 
@@ -59,7 +59,8 @@ signupRouter.post('/', async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
-        name: user.name
+        name: user.name,
+        is_admin: user.is_admin,
       }
     });
 

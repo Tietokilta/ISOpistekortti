@@ -26,8 +26,12 @@ app.use('/api/signup', signupRouter)
 
 // All actions that require authentication should be placed after this middleware
 app.use(middleWare.checkAuthToken)
+
+// Actions that require admin privileges should be placed after this
+app.use(middleWare.checkAdminPrivileges)
 app.use('/api/tasks', tasksRouter)
 app.use('/api/users', userRouter)
+
 
 //tähän väliin 
 

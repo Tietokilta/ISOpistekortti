@@ -7,6 +7,7 @@ const generateTokens = async (user) => {
   const userForToken = {
     username: user.username,
     id: user.id,
+    is_admin: user.is_admin,
   };
 
   // 15 minute access token
@@ -39,7 +40,7 @@ const checkRefreshToken = async (refreshToken) => {
       .digest('hex');
 
     const result = await pool.query(
-      `SELECT u.id, u.username, u.name
+      `SELECT u.id, u.username, u.is_admin
        FROM users u
        JOIN refresh_tokens rt ON rt.user_id = u.id
        WHERE rt.hashed_token = $1 
@@ -99,7 +100,8 @@ const refreshTokens = async (refreshToken, response) => {
     // Return user object for the middleware to use
     return {
       id: user.id,
-      username: user.username
+      username: user.username,
+      is_admin: user.is_admin,
     };
 
   } catch (error) {
