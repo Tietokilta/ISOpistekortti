@@ -12,6 +12,9 @@ npm install
 # setup .env file
 cp .env.example .env
 
+# Create separate secrets for all secrets in .env, with for example
+openssl rand -hex 32
+
 # start db
 npm run db:start
 

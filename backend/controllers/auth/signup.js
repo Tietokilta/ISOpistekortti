@@ -27,8 +27,7 @@ signupRouter.post('/', async (req, res) => {
       });
     }
 
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const passwordHash = await bcrypt.hash(password, consts.SALT_ROUNDS);
 
     const newUser = await pool.query(
       `INSERT INTO users (username, name, "passwordHash")

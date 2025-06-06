@@ -2,6 +2,7 @@ const userRouter = require('express').Router()
 require('../app');
 const bcrypt = require('bcrypt')
 const pool = require("../db");
+const consts = require('./auth/consts');
 
 async function testConnection() {
     const result = await pool.query("SELECT NOW()");
@@ -30,8 +31,7 @@ userRouter.post('/', async (request, response) => {
     );
 
     */
-    const saltRounds = 10;
-    const phash = await bcrypt.hash(request.body.password, saltRounds)
+    const phash = await bcrypt.hash(request.body.password, consts.SALT_ROUNDS)
     console.log(phash)
     response.status(204).end()
 })
