@@ -1,6 +1,8 @@
 import { useState } from "react"
+import { StatusButton } from './StatusButton.jsx'
 
-export function Card({ title, description}) {
+
+export function Card({ title, description, status}) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -17,6 +19,7 @@ export function Card({ title, description}) {
           {isOpen && (
             <div className="p-4 text-gray-600">
               {description}
+              <StatusButton status={status}/>
             </div>
           )}
         </div>

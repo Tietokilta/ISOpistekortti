@@ -62,6 +62,7 @@ const UserFront = ({ login, setLogin }) => {
             key={task.id}
             title={task.title}
             description={task.description}
+            status={'Not done'}
           />
         )}
       </div>
