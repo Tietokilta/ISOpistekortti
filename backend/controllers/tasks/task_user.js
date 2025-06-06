@@ -1,11 +1,8 @@
 const tasksRouter = require('./tasks');
 const pool = require("../../db");
 const consts = require("./consts");
+const utils = require("./utils");
 
-// Check if `status` is valid
-function isValidStatus(status) {
-  return Object.values(consts.TASK_STATUS).includes(status);
-}
 
 tasksRouter.get('/task_user', async (request, response) => {
   const user_id = request.user.id;
