@@ -35,7 +35,7 @@ function isValidStatusChange(task_info, new_status) {
 
     case consts.TASK_STATUS.REQUESTING: {
       if (new_status !== consts.TASK_STATUS.NOT_DONE) {
-        error.message = "Cannot change a task awaiting approval to anything but 'not done'";
+        error.message = "Cannot change a task awaiting approval to anything but 'not_done'";
         throw error;
       }
 
@@ -46,11 +46,11 @@ function isValidStatusChange(task_info, new_status) {
     case consts.TASK_STATUS.REJECTED:
     case consts.TASK_STATUS.NOT_DONE: {
       if (task_info.needs_admin_approval && new_status !== consts.TASK_STATUS.REQUESTING) {
-        error.message = "A not done or rejected task which requires admin approval can only be set to 'requesting'";
+        error.message = "A not_done or rejected task which requires admin approval can only be set to 'requesting'";
         throw error;
 
       } else if (!task_info.needs_admin_approval && new_status !== consts.TASK_STATUS.DONE) {
-        error.message = "A not done or rejected task which doesn't require admin approval can only be set to 'done'";
+        error.message = "A not_done or rejected task which doesn't require admin approval can only be set to 'done'";
         throw error;
       }
 
