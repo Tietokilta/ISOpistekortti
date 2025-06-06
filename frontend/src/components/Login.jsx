@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import loginService from '../services/login'
+import userService from '../services/users'
 
 const Button = ({ name, state, setState }) => {
     return (
@@ -8,7 +9,7 @@ const Button = ({ name, state, setState }) => {
     )
 }
 
-const Login = ({ login, setLogin }) => {
+const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
     const [loginForm, setLoginForm] = useState(false)
     const [register, setRegister] = useState(false)
     const [fullname, setFullname] = useState('')
@@ -26,13 +27,12 @@ const Login = ({ login, setLogin }) => {
         const response = await loginService.loginPost({ username: username, password: password })
         if (response.status === 200) {
             setLogin(!login)
+            setTaskHook(!taskHook)
         }
         //make a notification
     }
 
     const handleRegister = async () => {
-        //check passwords match
-        //check username is not taken
         //throtling?
         const checkPassword = () => {
             if (password === password2) {
@@ -44,8 +44,21 @@ const Login = ({ login, setLogin }) => {
             }
         }
         
-
-        //const response = await registerService.registerPost
+        if (checkPassword()) {
+            const response = await userService.registerPost({ username, password, fullname })
+            if (response.status === 201) {
+                setLogin(!login)
+                setTaskHook(!taskHook)
+            }
+            else {
+                //Notification
+                ErrorEvent(response)
+            }
+        }
+        else {
+            ErrorEvent("Passwords don't match")
+            //make notification
+        }
     }
 
 
@@ -69,7 +82,7 @@ const Login = ({ login, setLogin }) => {
                 <div  className='flex items-center justify-center'>
                     <div>
                         <p className='font-mono'>Username</p>
-                        <input className="border" onChange={handleUsernameChange}></input>
+                        <input className="border" type='text' onChange={handleUsernameChange}></input>
                         <p className='font-mono'>Password</p>
                         <input className="border" type='password' onChange={handlePasswordChange}></input>
                     </div>
@@ -91,7 +104,7 @@ const Login = ({ login, setLogin }) => {
                         <p className='font-mono'>Name</p>
                         <input className="border" onChange={handleFullnameChange}></input>
                         <p className='font-mono'>Username</p>
-                        <input className="border" type='password' onChange={handleUsernameChange}></input>
+                        <input className="border" type='text' onChange={handleUsernameChange}></input>
                         <p className='font-mono'>Password</p>
                         <input className="border" type='password' onChange={handlePasswordChange}></input>
                         <p className='font-mono'>Password again</p>

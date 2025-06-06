@@ -3,7 +3,10 @@ const baseUrl = '/api/tasks'
 
 const getAll = async () => {
     const request = await axios.get(baseUrl)
-    return request.data
+    if (request.status === 401) {
+        console.log("not authorized")
+    }
+    return request
 }
 
 export default { getAll }

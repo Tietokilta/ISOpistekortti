@@ -15,12 +15,28 @@ import taskService from './services/tasks'
 
 const UserFront = ({ login, setLogin }) => {
   const [tasks, setTasks] = useState([])
+  const [taskHook, setTaskHook] = useState(true)
   
   useEffect(() => {
-    taskService.getAll().then(task =>
-      setTasks( task )
-    )
-  }, [])
+    taskService.getAll()
+      .then(result => {
+        if (result.status === 200) {
+          setTasks(result.data);  // assuming tasks are in result.data
+        } 
+        else if (result.status === 401) {
+          console.log("moi")
+          setLogin(!login)
+        } 
+        else {
+          //if not ok show login form
+          
+          console.warn('Unexpected status:', result.status);
+        }
+      })
+      .catch(error => {
+        setLogin(!login)
+      });
+  }, [taskHook]);
   
 
   if(login) {
@@ -29,7 +45,7 @@ const UserFront = ({ login, setLogin }) => {
         className='flex flex-col items-center justify-center min-h-2/3 py-8'
       >
         <h1 className="text-3xl font-bold mb-4">ISOpistekortti 🤯💯</h1>
-        <Login login={login} setLogin={setLogin}/>
+        <Login login={login} setLogin={setLogin} taskHook={taskHook} setTaskHook={setTaskHook}/>
       </div>
     )
   }
@@ -46,6 +62,7 @@ const UserFront = ({ login, setLogin }) => {
             key={task.id}
             title={task.title}
             description={task.description}
+            status={'Not done'}
           />
         )}
       </div>
@@ -55,7 +72,8 @@ const UserFront = ({ login, setLogin }) => {
 }
 
 const App = () => {
-  const [login, setLogin] = useState(true)
+  const [login, setLogin] = useState(false) //don't show login on default, try to use cookies
+  //check for authentication token
 
   return (
     <Router>
