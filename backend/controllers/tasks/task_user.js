@@ -3,7 +3,6 @@ const pool = require("../../db");
 const consts = require("./consts");
 const utils = require("./utils");
 
-
 tasksRouter.get('/task_user', async (request, response) => {
   const user_id = request.user.id;
 
