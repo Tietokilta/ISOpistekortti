@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import loginService from '../services/login'
+import userService from '../services/users'
 
 const Button = ({ name, state, setState }) => {
     return (
@@ -8,7 +9,7 @@ const Button = ({ name, state, setState }) => {
     )
 }
 
-const Login = ({ login, setLogin }) => {
+const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
     const [loginForm, setLoginForm] = useState(false)
     const [register, setRegister] = useState(false)
     const [fullname, setFullname] = useState('')
@@ -26,12 +27,13 @@ const Login = ({ login, setLogin }) => {
         const response = await loginService.loginPost({ username: username, password: password })
         if (response.status === 200) {
             setLogin(!login)
+            setTaskHook(!taskHook)
         }
+        //window.location.href = '/'
         //make a notification
     }
 
     const handleRegister = async () => {
-        //check passwords match
         //check username is not taken
         //throtling?
         const checkPassword = () => {
@@ -44,6 +46,13 @@ const Login = ({ login, setLogin }) => {
             }
         }
         
+        if (checkPassword()) {
+            userService.registerPost({ username, password, fullname })
+        }
+        else {
+            ErrorEvent("Passwords don't match")
+            //make notification
+        }
 
         //const response = await registerService.registerPost
     }

@@ -1,14 +1,12 @@
 import React from 'react';
+import logoutService from '../services/logout.js'
 
 export function Logout({ setLogin }) {
-  const handleLogout = () => {
-    // Clear user session (example)
-    //localStorage.removeItem('token'); // or whatever you store
+  const handleLogout = async () => {
+    await logoutService.logoutPost()
     console.log('User logged out');
     setLogin(true);
-    // Redirect if needed
-    window.location.href = '/';
-  };
+  }
 
   return (
     <div className="absolute top-4 right-4">
