@@ -28,6 +28,13 @@ npm run db:seed
 npm run dev
 ```
 
+Seeding the database creates the following dummy users that can be logged into with the given username and password
+```
+alice:      'alicepass'     (admin)
+bob:        'bobpass'       (non-admin)
+charlie:    'charliepass'   (non-admin)
+```
+
 To open a psql session into the database, run
 ```bash
 docker compose exec postgres psql -h localhost -U myuser -d mydatabase
