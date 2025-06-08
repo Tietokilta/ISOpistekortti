@@ -3,14 +3,14 @@
 Pre-requisites [Node.js v22](https://nodejs.org/en/download) and [Docker](https://docs.docker.com/get-started/get-docker/)
 
 ```bash
+# setup .env file
+cp .env.example .env
+
 # navigate to backend directory
 cd backend
 
 # install dependencies
 npm install
-
-# setup .env file
-cp .env.example .env
 
 # Create separate secrets for all secrets in .env, with for example
 openssl rand -hex 32
