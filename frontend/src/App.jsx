@@ -13,6 +13,7 @@ import { Logout } from './components/Logout';
 import taskService from './services/tasks'
 
 
+
 const UserFront = ({ login, setLogin }) => {
   const [tasks, setTasks] = useState([])
   const [taskHook, setTaskHook] = useState(true)
@@ -24,7 +25,6 @@ const UserFront = ({ login, setLogin }) => {
           setTasks(result.data);  // assuming tasks are in result.data
         } 
         else if (result.status === 401) {
-          console.log("moi")
           setLogin(!login)
         } 
         else {
@@ -60,9 +60,7 @@ const UserFront = ({ login, setLogin }) => {
         {tasks.map(task => 
           <Card 
             key={task.id}
-            title={task.title}
-            description={task.description}
-            status={'Not done'}
+            task={task}
           />
         )}
       </div>
