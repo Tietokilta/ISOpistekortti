@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import loginService from '../services/login'
 import userService from '../services/users'
+import { resolvePath } from 'react-router-dom'
+
 
 const Button = ({ name, state, setState }) => {
     return (
@@ -25,6 +27,7 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
 
     const handleLogin = async () => {
         const response = await loginService.loginPost({ username: username, password: password })
+        console.log(response.data)
         if (response.status === 200) {
             setLogin(!login)
             setTaskHook(!taskHook)
