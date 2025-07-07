@@ -4,7 +4,10 @@ const app = express()
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const middleWare = require('./utils/middleware')
-const tasksRouter = require('./controllers/tasks')
+
+require('./controllers/tasks/task_user')
+const tasksRouter = require('./controllers/tasks/tasks')
+
 const userRouter = require('./controllers/users')
 
 const loginRouter = require('./controllers/auth/login')
@@ -26,6 +29,7 @@ app.use('/api/signup', signupRouter)
 
 // All actions that require authentication should be placed after this middleware
 app.use(middleWare.checkAuthToken)
+app.use('/api/tasks', tasksRouter)
 
 // Actions that require admin privileges should be placed after this
 app.use('/api/tasks', tasksRouter)

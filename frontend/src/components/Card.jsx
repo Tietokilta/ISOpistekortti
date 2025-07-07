@@ -22,6 +22,7 @@ export function Card({ task }) {
             <div className="p-4 text-gray-600">
               {task.description}
               <StatusButton status={task.status} type={task.needs_admin_approval}/>
+
             </div>
           )}
         </div>

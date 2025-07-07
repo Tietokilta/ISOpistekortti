@@ -4,6 +4,36 @@ const signupRouter = require('express').Router();
 const { generateTokens } = require('./token_utils');
 const consts = require('./consts');
 
+function validatePassword(password) {
+  if (typeof password !== "string") {
+    return ["Password must be a string"];
+  }
+
+  var failedChecks = [];
+  for (const { checkFn, message } of consts.PASSWORD_CHECKS) {
+    if (!checkFn(password)) {
+      failedChecks.push(message)
+    }
+  }
+
+  return failedChecks;
+}
+
+function validateUsername(username) {
+  if (typeof username !== "string") {
+    return ["Username must be a string"];
+  }
+
+  var failedChecks = [];
+  for (const { checkFn, message } of consts.USERNAME_CHECKS) {
+    if (!checkFn(username)) {
+      failedChecks.push(message)
+    }
+  }
+
+  return failedChecks;
+}
+
 signupRouter.post('/', async (req, res) => {
   const { username, password, name } = req.body;
 
@@ -13,7 +43,21 @@ signupRouter.post('/', async (req, res) => {
     });
   }
 
-  // NOTE: Could add validation for username and password meeting some constraints
+  const failedUsernameChecks = validateUsername(username);
+  if (failedUsernameChecks.length >= 1) {
+    return res.status(400).json({
+      message: "Invalid username",
+      failedUsernameChecks,
+    });
+  }
+
+  const failedPasswordChecks = validatePassword(password);
+  if (failedPasswordChecks.length >= 1) {
+    return res.status(400).json({
+      message: "Invalid password",
+      failedPasswordChecks,
+    });
+  }
 
   try {
     const existingUser = await pool.query(
@@ -27,8 +71,7 @@ signupRouter.post('/', async (req, res) => {
       });
     }
 
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const passwordHash = await bcrypt.hash(password, consts.SALT_ROUNDS);
 
     const newUser = await pool.query(
       `INSERT INTO users (username, name, "passwordHash")

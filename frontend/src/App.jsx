@@ -61,6 +61,9 @@ const UserFront = ({ login, setLogin }) => {
           <Card 
             key={task.id}
             task={task}
+            title={task.title}
+            description={task.description}
+            status={'Not done'}
           />
         )}
       </div>

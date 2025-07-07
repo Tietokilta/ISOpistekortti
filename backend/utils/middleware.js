@@ -30,7 +30,7 @@ const checkAuthToken = async (request, response, next) => {
   // Try access token
   if (accessToken) {
     try {
-      request.user = jwt.verify(accessToken, process.env.SECRET);
+      request.user = jwt.verify(accessToken, process.env.JWT_SECRET);
       return next();
     } catch (err) {
       // Expired or invalid access token, try to refresh below

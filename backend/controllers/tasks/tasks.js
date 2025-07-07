@@ -1,6 +1,6 @@
 const tasksRouter = require('express').Router()
-require('../app');
-const pool = require("../db");
+require('../../app');
+const pool = require("../../db");
 
 
 async function testConnection() {

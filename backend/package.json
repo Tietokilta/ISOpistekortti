@@ -10,8 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
     "build": "npm ci --only=production",
-    "db:start": "docker compose up",
-    "db:reset": "docker compose down -v",
+    "db:start": "docker compose --env-file=../.env up",
+    "db:reset": "docker compose --env-file=../.env down -v",
     "db:migrate": "npx knex migrate:latest",
     "db:seed": "npx knex seed:run"
   },

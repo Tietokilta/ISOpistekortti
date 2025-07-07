@@ -13,7 +13,7 @@ const generateTokens = async (user) => {
   // 15 minute access token
   const accessToken = jwt.sign(
     userForToken, 
-    process.env.SECRET,
+    process.env.JWT_SECRET,
     { expiresIn: consts.ACCESS_TOKEN_AGE_MINUTES.toString() + 'm' }
   );
 
