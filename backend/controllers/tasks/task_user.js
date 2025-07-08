@@ -8,7 +8,7 @@ tasksRouter.get('/task_user', async (request, response) => {
 
   try {
     const result = await pool.query(`
-      SELECT t.id, tu.user_id, t.title, t.description, tu.status, t.needs_admin_approval
+      SELECT tu.task_id, tu.user_id, t.title, t.description, tu.status, t.needs_admin_approval
       FROM tasks t
       INNER JOIN task_user tu
         ON t.id = tu.task_id
