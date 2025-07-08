@@ -32,7 +32,6 @@ app.use(middleWare.checkAuthToken)
 app.use('/api/tasks', tasksRouter)
 
 // Actions that require admin privileges should be placed after this
-app.use('/api/tasks', tasksRouter)
 app.use(middleWare.checkAdminPrivileges)
 app.use('/api/users', userRouter)
 
