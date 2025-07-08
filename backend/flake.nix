@@ -81,6 +81,27 @@
                     npm.enable = true;
                   };
                 }
+
+                {
+                  processes = {
+                    postgres.exec = "npm run db:start";
+                    backend.exec = "npm run dev";
+                  };
+
+                  process.managers.process-compose.settings.processes = {
+                    postgres = {
+                      readiness_probe = {
+                        exec.command = "docker compose exec postgres pg_isready -d ${builtins.getEnv "DB_DATABASE"} -U ${builtins.getEnv "DB_USER"}";
+                        initial_delay_seconds = 3;
+                        failure_thresholds = 3;
+                      };
+                    };
+
+                    backend = {
+                      depends_on.postgres.condition = "process_healthy";
+                    };
+                  };
+                }
               ];
             };
           });
