@@ -46,7 +46,7 @@ signupRouter.post('/', async (req, res) => {
   const failedUsernameChecks = validateUsername(username);
   if (failedUsernameChecks.length >= 1) {
     return res.status(400).json({
-      message: "Invalid username",
+      message: failedUsernameChecks[0],
       failedUsernameChecks,
     });
   }
@@ -54,7 +54,7 @@ signupRouter.post('/', async (req, res) => {
   const failedPasswordChecks = validatePassword(password);
   if (failedPasswordChecks.length >= 1) {
     return res.status(400).json({
-      message: "Invalid password",
+      message: failedPasswordChecks[0],
       failedPasswordChecks,
     });
   }

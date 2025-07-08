@@ -3,11 +3,10 @@ import loginService from '../services/login'
 import userService from '../services/users'
 import { resolvePath } from 'react-router-dom'
 
-
 const Button = ({ name, state, setState }) => {
     return (
         <button className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
-            onClick={() => {setState(!state)}}>{name}</button>
+            onClick={() => { setState(!state) }}>{name}</button>
     )
 }
 
@@ -18,6 +17,7 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [password2, setPassword2] = useState('')
+    const [notification, setNotification] = useState('')
 
 
     const handleFullnameChange = (event) => setFullname(event.target.value)
@@ -25,14 +25,20 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
     const handlePasswordChange = (event) => setPassword(event.target.value)
     const handlePassword2Change = (event) => setPassword2(event.target.value)
 
+    const showTemporaryMessage = (msg, duration = 3000) => {
+        setNotification(msg);
+        setTimeout(() => setNotification(''), duration);
+    };
+
     const handleLogin = async () => {
         const response = await loginService.loginPost({ username: username, password: password })
-        console.log(response.data)
         if (response.status === 200) {
             setLogin(!login)
             setTaskHook(!taskHook)
         }
-        //make a notification
+        else {
+            showTemporaryMessage('Invalid username or password')
+        }
     }
 
     const handleRegister = async () => {
@@ -42,25 +48,29 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
                 return true
             }
             else {
-                console.log('passwords dont match')
                 return false
             }
         }
-        
+
         if (checkPassword()) {
             const response = await userService.registerPost({ username, password, fullname })
+            console.log(response)
             if (response.status === 201) {
                 setLogin(!login)
                 setTaskHook(!taskHook)
             }
+            else if (response.status === 400) {
+                console.log(response.data.message)
+                showTemporaryMessage(response.data.message)
+            }
+            else if (response.status === 409)
+                showTemporaryMessage('Username already taken')
             else {
-                //Notification
-                ErrorEvent(response)
+                showTemporaryMessage('Error in creating user')
             }
         }
         else {
-            ErrorEvent("Passwords don't match")
-            //make notification
+            showTemporaryMessage('Passwords need to match')
         }
     }
 
@@ -70,28 +80,30 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
             <div className="p-6 rounded-2xl shadow-lg w-80 bg-white mb-4">
                 <h1 className="flex items-center justify-center font-bold">Kirjaudu sisään tai luo käyttäjä</h1>
                 <h1 className="flex items-center justify-center font-bold">Login or create a user</h1>
-                
+
                 <div className="flex items-center justify-center mt-6">
-                    <Button name='Login' state={loginForm} setState={setLoginForm}/>
-                    <Button name='Create user' state={register} setState={setRegister}/>
+                    <Button name='Login' state={loginForm} setState={setLoginForm} />
+                    <Button name='Create user' state={register} setState={setRegister} />
                 </div>
             </div>
         )
     }
     else if (loginForm) {
+        console.log(notification)
         return (
             <div className="p-6 rounded-2xl shadow-lg w-80 bg-white ">
                 <h1 className='flex items-center justify-center font-bold'>LOGIN</h1>
-                <div  className='flex items-center justify-center'>
+                <div className='flex items-center justify-center'>
                     <div>
                         <p className='font-mono'>Username</p>
                         <input className="border" type='text' onChange={handleUsernameChange}></input>
                         <p className='font-mono'>Password</p>
                         <input className="border" type='password' onChange={handlePasswordChange}></input>
+                        <p> {notification} </p>
                     </div>
                 </div>
                 <div className='flex items-center justify-center'>
-                    <Button name='Back' state={loginForm} setState={setLoginForm}/>
+                    <Button name='Back' state={loginForm} setState={setLoginForm} />
                     <button className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
                         onClick={() => handleLogin()}>Ok</button>
                 </div>
@@ -112,10 +124,11 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
                         <input className="border" type='password' onChange={handlePasswordChange}></input>
                         <p className='font-mono'>Password again</p>
                         <input className="border" type='password' onChange={handlePassword2Change}></input>
+                        <p> {notification} </p>
                     </div>
                 </div>
                 <div className='flex items-center justify-center'>
-                    <Button name='Back' state={register} setState={setRegister}/>
+                    <Button name='Back' state={register} setState={setRegister} />
                     <button className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
                         onClick={() => handleRegister()}>Ok</button>
                 </div>

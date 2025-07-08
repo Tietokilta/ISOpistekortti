@@ -1,13 +1,16 @@
 import userRequest from "../services/userRequest";
 
 const StatusButton = ({ status, type }) => {
-  console.log(status)
+  console.log('status, type: ', status, type)
   const handleRequest = async () => {
     userRequest.sendRequest({ "task_id": 1, "user_id": 2, "needs_admin_approval": type})
   }
+
+  // add logic to change color of button based on the status
+
   return (
     <div className="mt-4">
-      <p> <strong>Current status of task: </strong> {"add stuff here"} </p>
+      <p> <strong>Current status of task: </strong> {status} </p>
       <button
         type='button'
         onClick={handleRequest}
