@@ -19,7 +19,8 @@ const UserFront = ({ login, setLogin }) => {
   const [taskHook, setTaskHook] = useState(true)
   
   useEffect(() => {
-    taskService.getAll()
+    // taskService.getAll()
+    taskService.getUserTasks()
       .then(result => {
         if (result.status === 200) {
           setTasks(result.data);  // assuming tasks are in result.data
@@ -34,6 +35,7 @@ const UserFront = ({ login, setLogin }) => {
         }
       })
       .catch(error => {
+        console.warn(error)
         setLogin(!login)
       });
   }, [taskHook]);
@@ -58,12 +60,10 @@ const UserFront = ({ login, setLogin }) => {
       <h1 className="text-3xl font-bold">ISOpistekortti 🤯💯</h1>
       <div className="mt-6 space-y-4">
         {tasks.map(task => 
-          <Card 
-            key={task.id}
+          <Card
             task={task}
-            title={task.title}
-            description={task.description}
-            status={'Not done'}
+            tasks={tasks}
+            setTasks={setTasks}
           />
         )}
       </div>
