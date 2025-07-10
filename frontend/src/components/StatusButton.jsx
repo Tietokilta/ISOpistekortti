@@ -1,12 +1,20 @@
 import taskService from "../services/tasks.js";
+import { useEffect, useState } from "react";
 
 const StatusButton = ({ task, tasks, setTasks }) => {
+  const [class_name, setClass_name] = useState(""); // no initial value
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  // Set style of button and is it disabled initially, and every time tasks state is modified
+  useEffect(() => {
+    setClass_name(taskService.getButton(task))
+    setIsDisabled(task.status === 'rejected')
+  }, [tasks]);
+
   const handleRequest = async () => {
     //this is just for logging 
     //console.log(task)
     const new_status = taskService.getNewTaskStatus(task.status, task.needs_admin_approval)
-    //console.log(new_status)
-    //make a function to get new status
 
     const status = await taskService.postUserTask({ "task_id": task.task_id, "new_task_status": new_status })
     if (status === 200) {
@@ -14,9 +22,7 @@ const StatusButton = ({ task, tasks, setTasks }) => {
       var filtered = tasks.filter(function (value) {
         return value.task_id != task.task_id;
       })
-      
-
-      filtered.push({...task, status: new_status})
+      filtered.push({ ...task, status: new_status })
       setTasks(filtered.sort((a, b) => a.task_id - b.task_id))
     }
     else {
@@ -24,19 +30,24 @@ const StatusButton = ({ task, tasks, setTasks }) => {
     }
   }
 
-  // add logic to change color of button based on the status
-
+  const buttonLabel = {
+    done: "Done",
+    not_done: "Not done",
+    requesting: "Requesting...",
+    rejected: "Rejected",
+  }
   return (
     <div className="mt-4">
-      <p> <strong>Current status of task: </strong> {task.status} </p>
+      <p> <strong>Current status of task: </strong></p>
       <button
         type='button'
         onClick={handleRequest}
-        className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 active:scale-95"
+        className={class_name}
+        disabled={isDisabled}
       >
-        <p>{task.type ? "Request" : "Complete"}</p>
+        <p>{buttonLabel[task.status]}</p>
       </button>
-    </div>
+    </div >
   );
 }
 

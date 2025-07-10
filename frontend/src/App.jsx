@@ -6,7 +6,7 @@ import {
   useNavigate
 } from 'react-router-dom'
 
-import { Card }  from './components/Card';
+import { Card } from './components/Card';
 import Login from './components/Login';
 import { AdminFront } from './components/Adminfront'
 import { Logout } from './components/Logout';
@@ -17,20 +17,20 @@ import taskService from './services/tasks'
 const UserFront = ({ login, setLogin }) => {
   const [tasks, setTasks] = useState([])
   const [taskHook, setTaskHook] = useState(true)
-  
+
   useEffect(() => {
     // taskService.getAll()
     taskService.getUserTasks()
       .then(result => {
         if (result.status === 200) {
           setTasks(result.data);  // assuming tasks are in result.data
-        } 
+        }
         else if (result.status === 401) {
           setLogin(!login)
-        } 
+        }
         else {
           //if not ok show login form
-          
+
           console.warn('Unexpected status:', result.status);
         }
       })
@@ -39,37 +39,38 @@ const UserFront = ({ login, setLogin }) => {
         setLogin(!login)
       });
   }, [taskHook]);
-  
 
-  if(login) {
+
+  if (login) {
     return (
       <div
         className='flex flex-col items-center justify-center min-h-2/3 py-8'
       >
         <h1 className="text-3xl font-bold mb-4">ISOpistekortti 🤯💯</h1>
-        <Login login={login} setLogin={setLogin} taskHook={taskHook} setTaskHook={setTaskHook}/>
+        <Login login={login} setLogin={setLogin} taskHook={taskHook} setTaskHook={setTaskHook} />
       </div>
     )
   }
   else {
 
-  return (
-    <div
-      className='flex flex-col items-center justify-center min-h-[120vh] py-8'
-    >
-      <h1 className="text-3xl font-bold">ISOpistekortti 🤯💯</h1>
-      <div className="mt-6 space-y-4">
-        {tasks.map(task => 
-          <Card
-            task={task}
-            tasks={tasks}
-            setTasks={setTasks}
-          />
-        )}
+    return (
+      <div
+        className='flex flex-col items-center justify-center min-h-[120vh] py-8'
+      >
+        <h1 className="text-3xl font-bold">ISOpistekortti 🤯💯</h1>
+        <div className="mt-6 space-y-4">
+          {tasks.map(task =>
+            <Card
+              task={task}
+              tasks={tasks}
+              setTasks={setTasks}
+            />
+          )}
+        </div>
+        <Logout setLogin={setLogin} />
       </div>
-      <Logout setLogin={setLogin}/>
-    </div>
-  )}
+    )
+  }
 }
 
 const App = () => {
@@ -79,8 +80,8 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<UserFront login={login} setLogin={setLogin}/>} />
-        <Route path='/admin' element={<AdminFront setLogin={setLogin}/>} />
+        <Route path='/' element={<UserFront login={login} setLogin={setLogin} />} />
+        <Route path='/admin' element={<AdminFront setLogin={setLogin} />} />
       </Routes>
     </Router>
   )

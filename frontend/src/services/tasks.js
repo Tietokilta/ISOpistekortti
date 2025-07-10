@@ -37,12 +37,26 @@ const getNewTaskStatus = (currentStatus, admin_approval) => {
         done: "not_done",
         not_done: "done",
     }
-    if(admin_approval) {
+    if (admin_approval) {
         return admin[currentStatus]
     }
-    else{
+    else {
         return nonAdmin[currentStatus]
     }
 }
 
-export default { getUserTasks, getAll, postUserTask, getNewTaskStatus }
+const getButton = (task) => {
+    switch (task.status) {
+        case 'done':
+            return `bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 active:scale-95`
+        case 'not_done':
+            return `bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 active:scale-95`
+        case 'requesting':
+            return `bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 active:scale-95`
+        case 'rejected':
+            return `bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 active:scale-95`
+        default: console.log("Unknown status")
+    }
+}
+
+export default { getUserTasks, getAll, postUserTask, getNewTaskStatus, getButton }
