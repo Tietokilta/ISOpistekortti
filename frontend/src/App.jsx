@@ -11,10 +11,11 @@ import Login from './components/Login';
 import { AdminFront } from './components/Adminfront'
 import { Logout } from './components/Logout';
 import taskService from './services/tasks'
+import login from './services/login';
 
 
 
-const UserFront = ({ login, setLogin }) => {
+const UserFront = ({ login, setLogin, user, setUser }) => {
   const [tasks, setTasks] = useState([])
   const [taskHook, setTaskHook] = useState(true)
 
@@ -47,7 +48,7 @@ const UserFront = ({ login, setLogin }) => {
         className='flex flex-col items-center justify-center min-h-2/3 py-8'
       >
         <h1 className="text-3xl font-bold mb-4">ISOpistekortti 🤯💯</h1>
-        <Login login={login} setLogin={setLogin} taskHook={taskHook} setTaskHook={setTaskHook} />
+        <Login login={login} setLogin={setLogin} taskHook={taskHook} setTaskHook={setTaskHook} setUser={setUser} />
       </div>
     )
   }
@@ -73,18 +74,28 @@ const UserFront = ({ login, setLogin }) => {
   }
 }
 
+// Kun appi käynnistyy täytyisi olla tapa tarkistaa onko käyttäjällä tokenia, jos on niin palautetaan kyseinen käyttäjä
+// App
+// - login
+//   - user
+//   - admin
+
 const App = () => {
   const [login, setLogin] = useState(false) //don't show login on default, try to use cookies
+  const [user, setUser] = useState({ user_id: "", username: "", name: "", is_admin: false })
   //check for authentication token
 
-  return (
-    <Router>
-      <Routes>
-        <Route path='/' element={<UserFront login={login} setLogin={setLogin} />} />
-        <Route path='/admin' element={<AdminFront setLogin={setLogin} />} />
-      </Routes>
-    </Router>
-  )
+  if (!user.is_admin) {
+    return (
+      <UserFront login={login} setLogin={setLogin} user={user} setUser={setUser} />
+    )
+  }
+  else {
+    return (
+      <AdminFront login={login} setLogin={setLogin} />
+    )
+  }
+
 }
 
 export default App

@@ -10,7 +10,7 @@ const Button = ({ name, state, setState }) => {
     )
 }
 
-const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
+const Login = ({ login, setLogin, taskHook, setTaskHook, setUser }) => {
     const [loginForm, setLoginForm] = useState(false)
     const [register, setRegister] = useState(false)
     const [fullname, setFullname] = useState('')
@@ -33,8 +33,10 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
     const handleLogin = async () => {
         const response = await loginService.loginPost({ username: username, password: password })
         if (response.status === 200) {
+            const data = response.data 
             setLogin(!login)
             setTaskHook(!taskHook)
+            setUser({user_id : data.user_id, username : data.username, name : data.name, is_admin: data.is_admin})
         }
         else {
             showTemporaryMessage('Invalid username or password')
@@ -54,13 +56,13 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
 
         if (checkPassword()) {
             const response = await userService.registerPost({ username, password, fullname })
-            console.log(response)
+            //console.log(response)
             if (response.status === 201) {
                 setLogin(!login)
                 setTaskHook(!taskHook)
             }
             else if (response.status === 400) {
-                console.log(response.data.message)
+                //console.log(response.data.message)
                 showTemporaryMessage(response.data.message)
             }
             else if (response.status === 409)
@@ -89,7 +91,7 @@ const Login = ({ login, setLogin, taskHook, setTaskHook }) => {
         )
     }
     else if (loginForm) {
-        console.log(notification)
+        //console.log(notification)
         return (
             <div className="p-6 rounded-2xl shadow-lg w-80 bg-white ">
                 <h1 className='flex items-center justify-center font-bold'>LOGIN</h1>

@@ -35,7 +35,7 @@ const Container = ({ title }) => {
     );
 }
 
-export function AdminFront({ setLogin }) {
+export function AdminFront({ setLogin, login }) {
     const [tasks, setTasks] = useState([])
     
     useEffect(() => {

@@ -59,4 +59,4 @@ const getButton = (task) => {
     }
 }
 
-export default { getUserTasks, getAll, postUserTask, getNewTaskStatus, getButton }
+export default { getUserTasks, postUserTask, getNewTaskStatus, getButton, getAll }

@@ -33,6 +33,8 @@ app.use('/api/tasks', tasksRouter)
 
 // Actions that require admin privileges should be placed after this
 app.use(middleWare.checkAdminPrivileges)
+//only allow admin to use get all tasks
+app.get('/api/tasks')
 app.use('/api/users', userRouter)
 
 
