@@ -8,7 +8,7 @@ const middleWare = require('./utils/middleware')
 require('./controllers/tasks/task_user')
 const tasksRouter = require('./controllers/tasks/tasks')
 
-const userRouter = require('./controllers/users')
+const usersRouter = require('./controllers/users/users')
 
 const loginRouter = require('./controllers/auth/login')
 const signupRouter = require('./controllers/auth/signup')
@@ -30,12 +30,13 @@ app.use('/api/signup', signupRouter)
 // All actions that require authentication should be placed after this middleware
 app.use(middleWare.checkAuthToken)
 app.use('/api/tasks', tasksRouter)
+app.use('/api/users', usersRouter)
 
 // Actions that require admin privileges should be placed after this
 app.use(middleWare.checkAdminPrivileges)
 //only allow admin to use get all tasks
-app.get('/api/tasks')
-app.use('/api/users', userRouter)
+// app.get('/api/tasks')
+// app.use('/api/users', userRouter)
 
 
 //tähän väliin 
