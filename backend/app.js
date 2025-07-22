@@ -7,12 +7,12 @@ const middleWare = require('./utils/middleware')
 
 require('./controllers/tasks/task_user')
 const tasksRouter = require('./controllers/tasks/tasks')
-
 const usersRouter = require('./controllers/users/users')
 
 const loginRouter = require('./controllers/auth/login')
 const signupRouter = require('./controllers/auth/signup')
 const logoutRouter = require('./controllers/auth/logout')
+const adminRouter = require('./controllers/admin/user');
 
 app.use(cors())
 app.use(express.static('dist'))
@@ -34,6 +34,7 @@ app.use('/api/users', usersRouter)
 
 // Actions that require admin privileges should be placed after this
 app.use(middleWare.checkAdminPrivileges)
+app.use('/api/admin', adminRouter)
 //only allow admin to use get all tasks
 // app.get('/api/tasks')
 // app.use('/api/users', userRouter)
