@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const pool = require('../../db');
 const signupRouter = require('express').Router();
-const { generateTokens } = require('./token_utils');
-const consts = require('./consts');
+const { generateTokens } = require('../../utils/auth/tokenService');
+const consts = require('../../utils/auth/consts');
 const { validateUsername, validatePassword } = require("../../utils/users/validation");
 
 
@@ -10,14 +10,14 @@ signupRouter.post('/', async (req, res) => {
   const { username, password, name } = req.body;
 
   if (!username || !name || !password) {
-    return res.status(400).json({ 
+    return res.status(422).json({ 
       error: 'Username, name, and password are required' 
     });
   }
 
   const failedUsernameChecks = validateUsername(username);
   if (failedUsernameChecks.length >= 1) {
-    return res.status(400).json({
+    return res.status(422).json({
       message: failedUsernameChecks[0],
       failedUsernameChecks,
     });
@@ -25,7 +25,7 @@ signupRouter.post('/', async (req, res) => {
 
   const failedPasswordChecks = validatePassword(password);
   if (failedPasswordChecks.length >= 1) {
-    return res.status(400).json({
+    return res.status(422).json({
       message: failedPasswordChecks[0],
       failedPasswordChecks,
     });

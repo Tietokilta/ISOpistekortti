@@ -1,8 +1,16 @@
 const { validateUsername, validatePassword } = require("./validation");
+const { invlidateUserRefreshTokens, invalidateUserRefreshTokens } = require("../auth/tokenService");
 const bcrypt = require('bcrypt');
 const errors = require("../errors");
 const pool = require('../../db');
-const authConsts = require('../../controllers/auth/consts');
+const authConsts = require('../auth/consts');
+
+async function getAllUsers() {
+  return await pool.query(`
+    SELECT id, username, name, is_admin
+    FROM users
+  `)
+}
 
 async function changeUsername(userId, newUsername) {
   const failedUsernameChecks = validateUsername(newUsername);
@@ -32,7 +40,7 @@ async function changeUsername(userId, newUsername) {
     [newUsername, userId]
   );
 
-  if (result.affectedRows === 0) {
+  if (result.rowCount === 0) {
     throw new errors.ValidationError(
       `User with id "${userId}" does not exist`,
       { code: "NONEXISTENT_USER" }
@@ -50,6 +58,10 @@ async function changePassword(userId, newPassword) {
     );
   }
 
+  // Change password -> Log out all sessions. The 15 minute access tokens stay valid,
+  // but after they expire, user is logged out
+  await invalidateUserRefreshTokens(userId);
+
   const newPasswordHash = await bcrypt.hash(newPassword, authConsts.SALT_ROUNDS);
 
   const result = await pool.query(
@@ -59,7 +71,7 @@ async function changePassword(userId, newPassword) {
     [newPasswordHash, userId]
   );
 
-  if (result.affectedRows === 0) {
+  if (result.rowCount === 0) {
     throw new errors.ValidationError(
       `User with id "${userId}" does not exist`,
       { code: "NONEXISTENT_USER" }
@@ -67,4 +79,8 @@ async function changePassword(userId, newPassword) {
   }
 }
 
-module.exports = { changeUsername, changePassword };
+module.exports = { 
+  getAllUsers,
+  changeUsername,
+  changePassword,
+};

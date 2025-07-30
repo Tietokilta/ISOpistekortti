@@ -1,9 +1,8 @@
-const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const pool = require("../../db");
-const { generateTokens } = require("./token_utils");
-const consts = require("./consts");
+const { generateTokens } = require("../../utils/auth/tokenService");
+const consts = require("../../utils/auth/consts");
 
 
 // Login endpoint
@@ -11,7 +10,7 @@ loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body;
 
   if (!username || !password) {
-    return response.status(400).json({
+    return response.status(422).json({
       error: 'Username and password are required'
     });
   }

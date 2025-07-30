@@ -5,14 +5,14 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const middleWare = require('./utils/middleware')
 
-require('./controllers/tasks/task_user')
-const tasksRouter = require('./controllers/tasks/tasks')
+// require('./controllers/tasks/task_user')
+const tasksRouter = require('./controllers/tasks')
 const usersRouter = require('./controllers/users/users')
 
 const loginRouter = require('./controllers/auth/login')
 const signupRouter = require('./controllers/auth/signup')
 const logoutRouter = require('./controllers/auth/logout')
-const adminRouter = require('./controllers/admin/user');
+const adminRouter = require('./controllers/admin');
 
 app.use(cors())
 app.use(express.static('dist'))

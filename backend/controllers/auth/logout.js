@@ -1,6 +1,6 @@
 const logoutRouter = require('express').Router()
-const consts = require('./consts');
-const { deleteRefreshTokenFromDB, refreshTokens } = require('./token_utils');
+const consts = require('../../utils/auth/consts');
+const { deleteRefreshTokenFromDB } = require('../../utils/auth/tokenService');
 
 // Logout endpoint, clears cookies and invalidates refresh token
 logoutRouter.post('/', async (request, response) => {

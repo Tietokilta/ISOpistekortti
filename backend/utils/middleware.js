@@ -1,7 +1,7 @@
 //error handling ja pyyntöjen logger tänne
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
-const { refreshTokens } = require('../controllers/auth/token_utils');
+const { refreshTokens } = require('./auth/tokenService');
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
