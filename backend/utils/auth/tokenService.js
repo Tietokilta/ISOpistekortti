@@ -75,6 +75,14 @@ const deleteRefreshTokenFromDB = async(refreshToken) => {
   );
 }
 
+const invalidateUserRefreshTokens = async (userId) => {
+  await pool.query(`
+    DELETE FROM refresh_tokens
+    WHERE user_id = $1
+    `, [ userId ]
+  );
+};
+
 const refreshTokens = async (refreshToken, response) => {
   try {
     const user = await checkRefreshToken(refreshToken);
@@ -114,5 +122,7 @@ module.exports = {
   generateTokens,
   checkRefreshToken,
   deleteRefreshTokenFromDB,
+  invalidateUserRefreshTokens,
   refreshTokens,
 } 
+

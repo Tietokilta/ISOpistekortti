@@ -1,6 +1,4 @@
 const consts = require("./consts");
-const pool = require("../../db");
-
 // Check if `status` is valid
 function isValidStatus(status) {
   return Object.values(consts.TASK_STATUS).includes(status);
@@ -57,32 +55,9 @@ function isValidStatusChange(task_info, new_status) {
       break;
     }
   };
-
-}
-
-// Changes the status of `task_user` with given id to `new_status`
-// Does not check for whether the change is valid, and assumes the caller has already checked
-// Does check whether given `new_status` is a valid status
-// Does not catch errors, expects caller to catch
-async function changeTaskUserStatus(task_user_id, new_status) {
-  if (!isValidStatus(new_status)) {
-    throw new Error(`Given 'new_status': ${new_status} is not a valid status`);
-  }
-
-  const result = await pool.query(`
-    UPDATE task_user
-    SET status = $1
-    WHERE id = $2;
-  `, [new_status, task_user_id]);
-
-  if (result.rowCount === 0) {
-    throw new Error(`No task_user found with id ${task_user_id}`);
-  }
 }
 
 module.exports = {
   isValidStatus,
   isValidStatusChange,
-  changeTaskUserStatus,
-}
-
+};
