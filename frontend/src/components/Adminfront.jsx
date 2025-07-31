@@ -10,6 +10,7 @@
 //reset password
 //user mahdollisuus muokata omia tietoja
 //tarvitaanko listat usereista (ja taskusereista) ja taskeista
+//lisää tapa nähdä aiemmin hyväksytyt tehtävät
 
 import { useState, useEffect } from 'react'
 import { Logout } from "./Logout"
@@ -17,7 +18,7 @@ import adminService from "../services/admin.js"
 import taskService from "../services/tasks.js"
 
 
-function EditableField({ name, user, setUser, updateUserList, updatedParam }) {
+function EditableField({ name, user, setUser, updateUserList, updatedParam, task, setTask }) {
     const [isEditing, setIsEditing] = useState(false);
     const [inputValue, setInputValue] = useState('');
 
@@ -33,10 +34,18 @@ function EditableField({ name, user, setUser, updateUserList, updatedParam }) {
         //todo: update state of user list to have modified user in it
         // send a request to backend and if success change state of user in frontend
         console.log('New value:', inputValue);
-        console.log({ ...user, [updatedParam]: inputValue})
-        setUser({ ...user, [updatedParam]: inputValue})
-        setIsEditing(false);
+        if (user) {
+            console.log({ ...user, [updatedParam]: inputValue })
+            setUser({ ...user, [updatedParam]: inputValue })
+            setIsEditing(false);
+        }
+        if (task) {
+            console.log({ ...user, [updatedParam]: inputValue })
+            setTask({ ...task, [updatedParam]: inputValue })
+            setIsEditing(false);
+        }
     };
+
 
     const handleCancel = () => {
         setIsEditing(false);
@@ -78,6 +87,125 @@ function EditableField({ name, user, setUser, updateUserList, updatedParam }) {
             )}
         </div>
     );
+}
+
+function TogglableField({ updateUserList, setParam, param, field }) {
+    const handleSubmit = () => {
+        //todo: update state of user list to have modified user in it
+        // send a request to backend and if success change state of user in frontend
+        console.log("toggling", field, param.needs_admin_approval)
+        if (field === 'needs_admin_approval') {
+            //console.log({ ...param, 'needs_admin_approval': !param.needs_admin_approval })
+            setParam({ ...param, 'needs_admin_approval': !param.needs_admin_approval })
+        }
+    };
+
+    return (
+        <div className="p-4">
+            <div className="flex gap-2 items-center">
+
+                <button
+                    onClick={handleSubmit}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                    toggle
+                </button>
+            </div>
+        </div>
+    );
+}
+
+const AcceptButton = ({ taskUser }) => {
+    const handleSubmit = () => {
+        //todo: update state of user list to have modified user in it
+        // send a request to backend and if success change state of user in frontend
+        console.log("accepted")
+    };
+
+    return (
+        <div className="p-4">
+            <div className="flex gap-2 items-center">
+
+                <button
+                    onClick={handleSubmit}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                    Accept
+                </button>
+            </div>
+        </div>
+    );
+}
+
+const TaskCard = ({ taskFromList }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [task, setTask] = useState({ title: "testi", description: "tässä on tekstiä", needs_admin_approval: false })
+
+    return (
+        <div className="bg-gray-400 p-4 rounded-2xl shadow-lg w-full mb-4">
+            <button
+                className="w-full text-left flex justify-between items-center font-bold text-gray-900 text-lg p-4"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                {task.title}
+                <span className={`transform transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}>
+                    ▼
+                </span>
+            </button>
+
+            {isOpen && (
+                <div className="p-4 text-gray-700 space-y-3">
+                    <div className="flex items-center gap-2">
+                        <p className="font-medium">Title:</p>
+                        <p>{task.title}</p>
+                        <EditableField
+                            name={"Edit"}
+                            task={task}
+                            setTask={setTask}
+                            updateTaskList={[]}
+                            updatedParam={"title"}
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <p className="font-medium">Description:</p>
+                        <p>{task.description}</p>
+                        <EditableField
+                            name={"Edit"}
+                            task={task}
+                            setTask={setTask}
+                            updateTaskList={[]}
+                            updatedParam={"description"}
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <p className="font-medium">Admin Approved:</p>
+                        <p>{task.needs_admin_approval ? "true" : "false"}</p>
+                        <TogglableField
+                            updateUserList={[]}
+                            param={task}
+                            setParam={setTask}
+                            field={"needs_admin_approval"}
+                        />
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const AcceptingCard = ({ taskUserFromList }) => {
+    const [taskUser, setTaskUser] = useState({})
+
+    return (
+        <div className="bg-gray-400 p-4 rounded-2xl shadow-lg w-1/1 mb-4">
+            <div
+                className="w-full text-left flex justify-between items-center font-bold text-gray-900 text-lg p-4"
+            >
+                {"Alice, alicetest, do documentation"}
+                <AcceptButton taskUser={taskUser} setTaskUser={setTaskUser}/>
+            </div>
+        </div>
+    )
 }
 
 const UserCard = ({ userFromList }) => {
@@ -163,14 +291,24 @@ const Container = ({ title }) => {
                 </span>
             </button>
             {isOpen && (
+                // add a for loop here
                 <div className="p-4 text-gray-600">
-                    <UserCard />
-                    <UserCard />
+                    {title === 'Tasks' &&
+                        //[...Array(2)].map((_, index) => <UserCard key={index} />)}
+                        <TaskCard />
+                    }
+                    {title === 'Users' &&
+                        <UserCard />
+                    }
+                    {title === 'Accept requested credits' &&
+                        <AcceptingCard />
+                    }
                 </div>
             )}
         </div>
     );
 }
+
 
 export function AdminFront({ setLogin, login }) {
     const [tasks, setTasks] = useState([])
