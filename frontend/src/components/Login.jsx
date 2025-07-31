@@ -10,7 +10,7 @@ const Button = ({ name, state, setState }) => {
     )
 }
 
-const Login = ({ login, setLogin, taskHook, setTaskHook, setUser }) => {
+const Login = ({ login, setLogin, setUser }) => {
     const [loginForm, setLoginForm] = useState(false)
     const [register, setRegister] = useState(false)
     const [fullname, setFullname] = useState('')
@@ -35,7 +35,6 @@ const Login = ({ login, setLogin, taskHook, setTaskHook, setUser }) => {
         if (response.status === 200) {
             const data = response.data 
             setLogin(!login)
-            setTaskHook(!taskHook)
             setUser({user_id : data.user_id, username : data.username, name : data.name, is_admin: data.is_admin})
         }
         else {
@@ -59,7 +58,6 @@ const Login = ({ login, setLogin, taskHook, setTaskHook, setUser }) => {
             //console.log(response)
             if (response.status === 201) {
                 setLogin(!login)
-                setTaskHook(!taskHook)
             }
             else if (response.status === 400) {
                 //console.log(response.data.message)

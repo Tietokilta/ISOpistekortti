@@ -8,9 +8,21 @@ const loginPost = async ({ username, password }) => {
         return request
     }
     catch (error) {
-        console.log(error)
+        //console.log(error)
         return error.request?.status;
     }
 }
 
-export default { loginPost }
+const checkToken = async () => {
+    try {
+        const request = await axios.get('/api/users/user_info')
+        //console.log("checkToken", request.data)
+        return request
+        }
+    catch (error) {
+        //console.log(error)
+        return error.request?.status;
+    }
+}
+
+export default { loginPost, checkToken }
