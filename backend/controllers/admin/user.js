@@ -42,6 +42,7 @@ module.exports = (adminRouter) => {
     } catch (error) {
       if (error instanceof errors.ValidationError) {
         return response.status(error.status).json({
+          message: error.message,
           code: error.code,
           details: error.details
         });
@@ -76,6 +77,7 @@ module.exports = (adminRouter) => {
     } catch (error) {
       if (error instanceof errors.ValidationError) {
         return response.status(error.status).json({
+          message: error.message,
           code: error.code,
           details: error.details
         });
