@@ -9,7 +9,7 @@ const { validateUsername, validatePassword } = require("../../utils/users/valida
 signupRouter.post('/', async (req, res) => {
   const { username, password, name } = req.body;
 
-  if (!username || !name || !password) {
+  if (username == null || name == null || password == null) {
     return res.status(422).json({ 
       error: 'Username, name, and password are required' 
     });

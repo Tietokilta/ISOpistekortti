@@ -9,7 +9,7 @@ const consts = require("../../utils/auth/consts");
 loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body;
 
-  if (!username || !password) {
+  if (username == null || password == null) {
     return response.status(422).json({
       error: 'Username and password are required'
     });

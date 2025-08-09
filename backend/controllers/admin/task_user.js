@@ -9,7 +9,7 @@ module.exports = (adminRouter) => {
     }
 
     const body = request.body;
-    if (!body.new_task_status) {
+    if (body.new_task_status == null) {
       return response.status(400).json({ error: "'new_task_status' missing from body", });
     }
 

@@ -8,7 +8,7 @@ logoutRouter.post('/', async (request, response) => {
 
   try {
     // If refresh token exists, delete it from database
-    if (refreshToken) {
+    if (refreshToken != null) {
       await deleteRefreshTokenFromDB(refreshToken);
     }
 

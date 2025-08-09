@@ -26,7 +26,7 @@ module.exports = (tasksRouter) => {
 
   tasksRouter.post('/task_user', async (request, response) => {
     const body = request.body
-    if (!body) {
+    if (body == null) {
       console.log("request did not have a body");
       return response.status(422).json({error: "Request is missing a body"});
     }
@@ -35,7 +35,7 @@ module.exports = (tasksRouter) => {
     const new_task_status = body.new_task_status;
     const user = request.user;
 
-    if (!task_id || !new_task_status) {
+    if (task_id == null || new_task_status == null) {
       console.log("'body.task_id', or 'body.new_task_status' missing");
       return response.status(422).json({error: "Body is missing 'task_id' or 'new_task_status'"});
     }
