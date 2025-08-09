@@ -89,11 +89,11 @@ function EditableField({ name, user, setUser, updateUserList, updatedParam, task
     );
 }
 
-function TogglableField({ updateUserList, setParam, param, field }) {
+function TogglableField({ task, tasks, setTasks, field }) {
     const handleSubmit = () => {
         //todo: update state of user list to have modified user in it
         // send a request to backend and if success change state of user in frontend
-        console.log("toggling", field, param.needs_admin_approval)
+        console.log("toggling", field, task.needs_admin_approval)
         if (field === 'needs_admin_approval') {
             //console.log({ ...param, 'needs_admin_approval': !param.needs_admin_approval })
             setParam({ ...param, 'needs_admin_approval': !param.needs_admin_approval })
@@ -137,9 +137,8 @@ const AcceptButton = ({ taskUser }) => {
     );
 }
 
-const TaskCard = ({ taskFromList }) => {
+const TaskCard = ({ task, tasks, setTasks }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [task, setTask] = useState({ title: "testi", description: "tässä on tekstiä", needs_admin_approval: false })
 
     return (
         <div className="bg-gray-400 p-4 rounded-2xl shadow-lg w-full mb-4">
@@ -161,8 +160,8 @@ const TaskCard = ({ taskFromList }) => {
                         <EditableField
                             name={"Edit"}
                             task={task}
-                            setTask={setTask}
-                            updateTaskList={[]}
+                            tasks={tasks}
+                            setTasks={setTasks}
                             updatedParam={"title"}
                         />
                     </div>
@@ -172,8 +171,8 @@ const TaskCard = ({ taskFromList }) => {
                         <EditableField
                             name={"Edit"}
                             task={task}
-                            setTask={setTask}
-                            updateTaskList={[]}
+                            tasks={tasks}
+                            setTasks={setTasks}
                             updatedParam={"description"}
                         />
                     </div>
@@ -181,9 +180,9 @@ const TaskCard = ({ taskFromList }) => {
                         <p className="font-medium">Admin Approved:</p>
                         <p>{task.needs_admin_approval ? "true" : "false"}</p>
                         <TogglableField
-                            updateUserList={[]}
-                            param={task}
-                            setParam={setTask}
+                            task={task}
+                            tasks={tasks}
+                            setTasks={setTasks}
                             field={"needs_admin_approval"}
                         />
                     </div>
@@ -202,7 +201,7 @@ const AcceptingCard = ({ taskUserFromList }) => {
                 className="w-full text-left flex justify-between items-center font-bold text-gray-900 text-lg p-4"
             >
                 {"Alice, alicetest, do documentation"}
-                <AcceptButton taskUser={taskUser} setTaskUser={setTaskUser}/>
+                <AcceptButton taskUser={taskUser} setTaskUser={setTaskUser} />
             </div>
         </div>
     )
@@ -277,7 +276,7 @@ const UserCard = ({ userFromList }) => {
     )
 }
 
-const Container = ({ title }) => {
+const Container = ({ title, tasks, setTasks = { setTasks } }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <div className="p-6 rounded-2xl shadow-lg w-150 bg-white mb-4">
@@ -294,8 +293,16 @@ const Container = ({ title }) => {
                 // add a for loop here
                 <div className="p-4 text-gray-600">
                     {title === 'Tasks' &&
-                        //[...Array(2)].map((_, index) => <UserCard key={index} />)}
-                        <TaskCard />
+                        <>
+                            {tasks.map((task, index) => (
+                                <TaskCard
+                                    key={index}
+                                    task={task}
+                                    tasks={tasks}
+                                    setTasks={setTasks}
+                                />
+                            ))}
+                        </>
                     }
                     {title === 'Users' &&
                         <UserCard />
@@ -331,6 +338,15 @@ export function AdminFront({ setLogin, login }) {
             .catch(error => {
                 setLogin(!login)
             });
+        adminService.getTasks()
+            .then(result => {
+                if (result.status === 200) {
+                    setTasks(result.data.tasks)
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }, []);
     console.log(tasks)
 
@@ -338,7 +354,7 @@ export function AdminFront({ setLogin, login }) {
         <div className="flex flex-col items-center justify-center">
             <h1 className="text-white text-5xl mb-5">Admin Panel</h1>
             <Container title={"Users"} />
-            <Container title={"Tasks"} />
+            <Container title={"Tasks"} tasks={tasks} setTasks={setTasks} />
             <Container title={"Accept requested credits"} />
             <Logout setLogin={setLogin} />
         </div>
