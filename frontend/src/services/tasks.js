@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { data } from 'react-router-dom'
-const baseUrl = '/api/tasks'
+const baseUrl = '/api/admin/tasks'
 const taskUserBase = '/api/tasks/task_user'
 
 const getAll = async () => {
