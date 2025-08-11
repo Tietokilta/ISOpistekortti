@@ -6,6 +6,7 @@
   "author": "Otso Mikkilä",
   "type": "commonjs",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",

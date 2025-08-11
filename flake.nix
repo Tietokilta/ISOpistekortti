@@ -18,48 +18,13 @@
     {
       packages = forEachSystem (system: let
           pkgs = nixpkgs.legacyPackages.${system};
-          backend = (pkgs.buildNpmPackage (finalAttrs: {
-            pname = "ISOpistekortti";
-            version = self.rev or "dirty";
-
-            src = ./backend;
-            npmDepsHash = "sha256-w/UQarkFpAdALg/xRQktmsYBM5te/wZxBWM4vdmu7Bc=";
-
-            nativeBuildInputs = with pkgs; [ 
-              nodejs
-              node-pre-gyp
-              makeWrapper
-            ];
-
-            buildPhase = ''
-              runHook preBuild
-
-              npm run build
-
-              runHook postBuild
-            '';
-
-            installPhase = ''
-              runHook preInstall
-
-              mkdir -p $out
-              mkdir $out/bin
-              cp -r . $out/
-
-              makeWrapper "${pkgs.nodejs}/bin/node" "$out/bin/${finalAttrs.pname}" \
-                --add-flags "$out/index.js"
-
-              runHook postInstall
-            '';
-          }));
-
-        in {
-          inherit backend;
-          docker = pkgs.dockerTools.buildImage {
-            name = backend.pname;
+          lib = pkgs.lib;
+        in rec {
+          isopistekortti = pkgs.callPackage ./package.nix { };
+          docker = pkgs.dockerTools.buildLayeredImage {
+            name = "isopistekortti";
             tag = "latest";
-
-            config.Cmd = ["${backend}/bin/${backend.pname}"];
+            config.Cmd = ["${lib.getExe isopistekortti}"];
           };
 
           devenv-up = self.devShells.${system}.default.config.procfileScript;
