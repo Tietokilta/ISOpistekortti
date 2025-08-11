@@ -1,6 +1,7 @@
 const express = require('express')
 require('express-async-errors')
 const app = express()
+const path = require("path");
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const middleWare = require('./utils/middleware')
@@ -15,7 +16,6 @@ const logoutRouter = require('./controllers/auth/logout')
 const adminRouter = require('./controllers/admin');
 
 app.use(cors())
-app.use(express.static('dist'))
 app.use(express.json())
 app.use(cookieParser())
 
@@ -27,20 +27,25 @@ app.use('/api/login', loginRouter)
 app.use('/api/logout', logoutRouter)
 app.use('/api/signup', signupRouter)
 
-// All actions that require authentication should be placed after this middleware
-app.use(middleWare.checkAuthToken)
-app.use('/api/tasks', tasksRouter)
-app.use('/api/users', usersRouter)
+app.use('/api/tasks', middleWare.checkAuthToken, tasksRouter)
+app.use('/api/users', middleWare.checkAuthToken, usersRouter)
 
-// Actions that require admin privileges should be placed after this
-app.use(middleWare.checkAdminPrivileges)
-app.use('/api/admin', adminRouter)
-//only allow admin to use get all tasks
-// app.get('/api/tasks')
-// app.use('/api/users', userRouter)
+app.use('/api/admin', middleWare.checkAuthToken, middleWare.checkAdminPrivileges, adminRouter)
 
+// Catch all other requests to /api/* here, so they don't get served the static site
+app.use('/api', (req, res) => {
+  return res.status(404).json({ error: 'Unknown endpoint', });
+})
 
-//tähän väliin 
+const frontendPath = process.env.FRONTEND_PATH
+  ? path.resolve(process.env.FRONTEND_PATH)
+  : path.resolve(__dirname, "../frontend/dist");
+
+app.use(express.static(frontendPath));
+
+app.get("*", (req, res) => {
+  return res.sendFile(path.join(frontendPath, "index.html"));
+});
 
 app.use(middleWare.unknownEndpoint)
 app.use(middleWare.errorHandler)
