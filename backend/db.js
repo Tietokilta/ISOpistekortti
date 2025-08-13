@@ -1,6 +1,4 @@
-const pg = require("pg");
-const { native } = pg;
-const { Pool } = native;
+const { Pool } = require("pg");
 
 const pool = new Pool({
   user: process.env.DB_USER,

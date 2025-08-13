@@ -26,7 +26,6 @@
           docker = pkgs.dockerTools.buildLayeredImage {
             name = "isopistekortti";
             tag = "latest";
-            contents = [ pkgs.cacert ];
             config.Cmd = [ "${lib.getExe isopistekortti}" ];
           };
         }
@@ -40,10 +39,6 @@
         pkgs.mkShellNoCC {
           packages = with pkgs; [
             nodejs
-
-            # Needed to install pg-native
-            python3
-            libpq.pg_config
           ];
         }
       );
