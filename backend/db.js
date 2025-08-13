@@ -10,9 +10,7 @@ const pool = new Pool({
   ssl:
     process.env.NODE_ENV === "production"
       ? {
-          sslmode: "verify-full",
-          rejectUnauthorized: true,
-          sslrootcert: "system",
+          rejectUnauthorized: false,
         }
       : undefined,
   port: 5432,
