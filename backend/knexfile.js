@@ -16,7 +16,24 @@ development = {
   },
 };
 
-production = development;
+production = {
+  client: "pg",
+  connection: {
+    host: DB_URL,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_DATABASE,
+
+    ssl: true,
+    sslmode: "require",
+  },
+  migrations: {
+    directory: path.join(__dirname, "migrations"),
+  },
+  seeds: {
+    directory: path.join(__dirname, "seeds"),
+  },
+};
 
 module.exports = {
   development,
