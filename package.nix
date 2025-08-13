@@ -17,22 +17,22 @@ let
     '';
   };
 in
-  buildNpmPackage {
-    name = "isopistekortti";
-    src = ./backend;
-    npmDepsHash = "sha256-w/UQarkFpAdALg/xRQktmsYBM5te/wZxBWM4vdmu7Bc=";
+buildNpmPackage {
+  name = "isopistekortti";
+  src = ./backend;
+  npmDepsHash = "sha256-w/UQarkFpAdALg/xRQktmsYBM5te/wZxBWM4vdmu7Bc=";
 
-    nativeBuildInputs = [
-      node-pre-gyp
-    ];
+  nativeBuildInputs = [
+    node-pre-gyp
+  ];
 
-    makeWrapperArgs = [
-      "--set-default FRONTEND_PATH ${frontend}"
-    ];
+  makeWrapperArgs = [
+    "--set-default FRONTEND_PATH ${frontend}"
+  ];
 
-    postInstall = ''
-      mv $out/bin/backend $out/bin/isopistekortti
-    '';
+  postInstall = ''
+    mv $out/bin/backend $out/bin/isopistekortti
+  '';
 
-    meta.mainProgram = "isopistekortti";
-  }
+  meta.mainProgram = "isopistekortti";
+}
