@@ -30,7 +30,7 @@ jobs:
         run: docker load < result
 
       - name: Tag image
-        run: docker tag isopistekortti ghcr.io/tietokilta/isopistekortti:latest
+        run: docker tag isopistekortti ghcr.io/tietokilta/isopistekortti:${{ github.sha }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -40,4 +40,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push image
-        run: docker push ghcr.io/tietokilta/isopistekortti:latest
+        run: docker push ghcr.io/tietokilta/isopistekortti:${{ github.sha }}
