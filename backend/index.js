@@ -10,7 +10,7 @@ async function waitForDb(knexClient, { retries = 10, delayMs = 1000 } = { }) {
       return;
     } catch (err) {
       const ms = Math.min(delayMs * 2 ** i, 30000);
-      console.warn(`DB not ready (attempt ${i+1}/${retries}): ${err.message}. retrying in ${ms}ms`);
+      console.warn(`DB not ready (attempt ${i+1}/${retries}): ${err}. retrying in ${ms}ms`);
       await new Promise(r => setTimeout(r, ms));
     }
   }
