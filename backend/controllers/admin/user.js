@@ -20,19 +20,19 @@ module.exports = (adminRouter) => {
 
   adminRouter.post('/users/:userId/username', async (request, response) => {
     if (!isValidInt(request.params.userId)) {
-      return response.status(422).json({ error: "Provided user id is not an integer"});
+      return response.status(400).json({ error: "Provided user id is not an integer"});
     }
 
     const body = request.body
     if (body == null) {
       console.log("request did not have a body");
-      return response.status(422).json({error: "Request doesn't have a body"});
+      return response.status(400).json({error: "Request doesn't have a body"});
     }
 
     const newUsername = body.username;
     if (newUsername == null) {
       console.log("Request did not have a username");
-      return response.status(422).json({error: "Request does not have a username"});
+      return response.status(400).json({error: "Request does not have a username"});
     }
 
     try {
@@ -55,19 +55,19 @@ module.exports = (adminRouter) => {
 
   adminRouter.post('/users/:userId/password', async (request, response) => {
     if (!isValidInt(request.params.userId)) {
-      return response.status(422).json({ error: "Provided user id is not an integer"});
+      return response.status(400).json({ error: "Provided user id is not an integer"});
     }
 
     const body = request.body
     if (body == null) {
       console.log("request did not have a body");
-      return response.status(422).json({error: "Request doesn't have a body"});
+      return response.status(400).json({error: "Request doesn't have a body"});
     }
 
     const newPassword = body.password;
     if (newPassword == null) {
       console.log("Request did not have a password");
-      return response.status(422).json({error: "Request does not have a password"});
+      return response.status(400).json({error: "Request does not have a password"});
     }
 
     try {

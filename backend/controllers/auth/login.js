@@ -10,7 +10,7 @@ loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body;
 
   if (username == null || password == null) {
-    return response.status(422).json({
+    return response.status(400).json({
       error: 'Username and password are required'
     });
   }

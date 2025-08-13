@@ -10,14 +10,14 @@ signupRouter.post('/', async (req, res) => {
   const { username, password, name } = req.body;
 
   if (username == null || name == null || password == null) {
-    return res.status(422).json({ 
+    return res.status(400).json({ 
       error: 'Username, name, and password are required' 
     });
   }
 
   const failedUsernameChecks = validateUsername(username);
   if (failedUsernameChecks.length >= 1) {
-    return res.status(422).json({
+    return res.status(400).json({
       message: failedUsernameChecks[0],
       failedUsernameChecks,
     });
@@ -25,7 +25,7 @@ signupRouter.post('/', async (req, res) => {
 
   const failedPasswordChecks = validatePassword(password);
   if (failedPasswordChecks.length >= 1) {
-    return res.status(422).json({
+    return res.status(400).json({
       message: failedPasswordChecks[0],
       failedPasswordChecks,
     });

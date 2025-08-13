@@ -14,7 +14,7 @@ module.exports = (adminRouter) => {
     }
 
     if (!isValidStatus(body.new_task_status)) {
-      return response.status(422).json({
+      return response.status(400).json({
         error: "Given status is not a valid status",
       });
     }

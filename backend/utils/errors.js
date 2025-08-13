@@ -2,7 +2,7 @@ class ValidationError extends Error {
   constructor(message, options = {}) {
     super(message);
     this.name = "ValidationError";
-    this.status = options.status || 422;
+    this.status = options.status || 400;
     this.code   = options.code   || "VALIDATION_ERROR";
     if (options.details) this.details = options.details; 
   }

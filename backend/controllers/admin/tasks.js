@@ -6,11 +6,11 @@ module.exports = (adminRouter) => {
   adminRouter.post("/tasks", async (request, response) => {
     const body = request.body;
     if ( !(body.title && body.description && body.needs_admin_approval) ) {
-      return response.status(422).send({ error: "'title', 'description', or 'needs_admin_approval' missing from body" });
+      return response.status(400).send({ error: "'title', 'description', or 'needs_admin_approval' missing from body" });
     }
 
     if (typeof body.needs_admin_approval !== "boolean") {
-      return response.status(422).json({ error: "'needs_admin_approval' must be a boolean"});
+      return response.status(400).json({ error: "'needs_admin_approval' must be a boolean"});
     }
 
     try {
@@ -27,11 +27,11 @@ module.exports = (adminRouter) => {
     const body = request.body;
 
     if ( !(body.task_id != null && body.title && body.description && body.needs_admin_approval) ) {
-      return response.status(422).json({ error: "Missing 'task_id', 'title', 'description', or 'needs_admin_approval' from request"});
+      return response.status(400).json({ error: "Missing 'task_id', 'title', 'description', or 'needs_admin_approval' from request"});
     }
 
     if (typeof body.needs_admin_approval !== "boolean") {
-      return response.status(422).json({ error: "'needs_admin_approval' must be a boolean"});
+      return response.status(400).json({ error: "'needs_admin_approval' must be a boolean"});
     }
 
     try {
@@ -51,7 +51,7 @@ module.exports = (adminRouter) => {
   adminRouter.delete("/tasks", async (request, response) => {
     const body = request.body;
     if (body.task_id == null) {
-      return response.status(422).json({ error: "'task_id' missing from request body" });
+      return response.status(400).json({ error: "'task_id' missing from request body" });
     }
 
     try {

@@ -28,7 +28,7 @@ module.exports = (tasksRouter) => {
     const body = request.body
     if (body == null) {
       console.log("request did not have a body");
-      return response.status(422).json({error: "Request is missing a body"});
+      return response.status(400).json({error: "Request is missing a body"});
     }
 
     const task_id = body.task_id;
@@ -37,11 +37,11 @@ module.exports = (tasksRouter) => {
 
     if (task_id == null || new_task_status == null) {
       console.log("'body.task_id', or 'body.new_task_status' missing");
-      return response.status(422).json({error: "Body is missing 'task_id' or 'new_task_status'"});
+      return response.status(400).json({error: "Body is missing 'task_id' or 'new_task_status'"});
     }
 
     if (!isValidStatus(new_task_status)) {
-      return response.status(422).json({
+      return response.status(400).json({
         error: "Given status is not a valid status",
       });
     }
