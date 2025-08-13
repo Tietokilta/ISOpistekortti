@@ -1,6 +1,9 @@
 {
   buildNpmPackage,
   node-pre-gyp,
+  python3,
+  libpq,
+  which,
 }:
 let
   frontend = buildNpmPackage {
@@ -20,10 +23,17 @@ in
 buildNpmPackage {
   name = "isopistekortti";
   src = ./backend;
-  npmDepsHash = "sha256-e7/umMywjHVULiRv6Rojd2mL4RIOPfBTePn0zRNJ+14=";
+  npmDepsHash = "sha256-GhHhGVxcSwNyDoVdThr5CNOClp54Md4r8g476LRwyZg=";
 
   nativeBuildInputs = [
     node-pre-gyp
+    python3
+    libpq.pg_config
+    which
+  ];
+
+  buildInputs = [
+    libpq
   ];
 
   makeWrapperArgs = [
