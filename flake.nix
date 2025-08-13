@@ -34,6 +34,7 @@
           docker = pkgs.dockerTools.buildLayeredImage {
             name = "isopistekortti";
             tag = "latest";
+            contents = [ pkgs.cacert ];
             config.Cmd = [ "${lib.getExe isopistekortti}" ];
           };
 
