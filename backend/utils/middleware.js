@@ -63,7 +63,7 @@ const checkAdminPrivileges = async (request, response, next) => {
 
 function ignoreFavicon(req, res, next) {
   if (req.originalUrl.includes('favicon.ico')) {
-    res.status(204).end()
+    return res.status(204).end()
   }
   next();
 }
