@@ -24,8 +24,7 @@ production = {
     password: DB_PASSWORD,
     database: DB_DATABASE,
 
-    ssl: true,
-    sslmode: "require",
+    ssl: { rejectUnauthorized: false, },
   },
   migrations: {
     directory: path.join(__dirname, "migrations"),
