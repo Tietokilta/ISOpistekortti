@@ -30,7 +30,9 @@ jobs:
         run: docker load < result
 
       - name: Tag image
-        run: docker tag isopistekortti ghcr.io/tietokilta/isopistekortti:${{ github.sha }}
+        run: |
+          docker tag isopistekortti ghcr.io/tietokilta/isopistekortti:latest
+          docker tag isopistekortti ghcr.io/tietokilta/isopistekortti:${{ github.sha }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -40,4 +42,24 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push image
-        run: docker push ghcr.io/tietokilta/isopistekortti:${{ github.sha }}
+        run: |
+          docker push ghcr.io/tietokilta/isopistekortti:latest
+          docker push ghcr.io/tietokilta/isopistekortti:${{ github.sha }}
+
+  deploy:
+    # only run on published releases, enable this when we release
+    #if: github.event_name == 'release' && github.event.action == 'published'
+    name: Deploy to Azure
+    runs-on: ubuntu-latest
+    needs: isopistekortti
+    steps:
+      - name: Login via Azure CLI
+        uses: azure/login@v2
+        with:
+          client-id: ${{secrets.AZURE_CLIENT_ID}}
+          subscription-id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+          tenant-id: ${{secrets.AZURE_TENANT_ID}}
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: tik-isopistekortti-prod # TODO: if we ever setup more envs than prod, make this variable customizable
+          images: ghcr.io/tietokilta/isopistekortti:${{ github.sha }}
