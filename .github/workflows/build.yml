@@ -1,9 +1,9 @@
 name: Build and Push Nix Docker Images
 
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
