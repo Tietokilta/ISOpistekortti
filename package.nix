@@ -20,7 +20,7 @@ in
 buildNpmPackage {
   name = "isopistekortti";
   src = ./backend;
-  npmDepsHash = "sha256-e7/umMywjHVULiRv6Rojd2mL4RIOPfBTePn0zRNJ+14=";
+  npmDepsHash = "";
 
   nativeBuildInputs = [
     node-pre-gyp
