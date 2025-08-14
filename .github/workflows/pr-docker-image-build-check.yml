@@ -1,0 +1,19 @@
+name: Build docker image PR check
+
+on:
+  pull_request:
+
+jobs:
+  isopistekortti:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build isopistekortti Docker image
+        run: nix build .#docker --print-build-logs
