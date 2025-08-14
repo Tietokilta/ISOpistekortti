@@ -26,7 +26,13 @@
           docker = pkgs.dockerTools.buildLayeredImage {
             name = "isopistekortti";
             tag = "latest";
-            config.Cmd = [ "${lib.getExe isopistekortti}" ];
+
+            config = {
+              Cmd = [ "${lib.getExe isopistekortti}" ];
+              Env = [
+                "PGSSLROOTCERT=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+              ];
+            };
           };
         }
       );

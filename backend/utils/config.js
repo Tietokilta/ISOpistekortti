@@ -9,6 +9,7 @@ const DB_URL = process.env.DB_URL
 const DB_USER = process.env.DB_USER
 const DB_PASSWORD = process.env.DB_PASSWORD
 const DB_DATABASE = process.env.DB_DATABASE
+const CA_PATH = process.env.PGSSLROOTCERT || "/etc/ssl/certs/ca-bundle.crt"
 
 module.exports = {
   PORT,
@@ -17,4 +18,5 @@ module.exports = {
   DB_USER,
   DB_PASSWORD,
   DB_DATABASE,
+  CA_PATH,
 }

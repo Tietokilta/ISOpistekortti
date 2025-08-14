@@ -1,14 +1,17 @@
 const { Pool } = require("pg");
+const { DB_USER, DB_DATABASE, DB_PASSWORD, DB_URL, CA_PATH } = require("./utils/config");
+const fs = require("fs");
 
 const pool = new Pool({
-  user: process.env.DB_USER,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_URL,
+  user: DB_USER,
+  database: DB_DATABASE,
+  password: DB_PASSWORD,
+  host: DB_URL,
   ssl:
     process.env.NODE_ENV === "production"
       ? {
-          rejectUnauthorized: false,
+          rejectUnauthorized: true,
+          ca: fs.readFileSync(CA_PATH).toString(),
         }
       : undefined,
   port: 5432,
