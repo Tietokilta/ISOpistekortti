@@ -21,30 +21,33 @@ async function changeUsername(userId, newUsername) {
     );
   }
 
-  const existingUser = await pool.query(
-    'SELECT id FROM users WHERE username = $1',
-    [newUsername]
-  );
-
-  if (existingUser.rows.length > 0) {
-    throw new errors.ValidationError(
-      `"${newUsername}" is already taken`,
-      { code: "USERNAME_TAKEN", }
+  try {
+    const result = await pool.query(
+      `UPDATE users
+      SET username = $1
+      WHERE id = $2`,
+      [newUsername, userId]
     );
-  }
 
-  const result = await pool.query(
-    `UPDATE users
-    SET username = $1
-    WHERE id = $2`,
-    [newUsername, userId]
-  );
+    if (result.rowCount === 0) {
+      throw new errors.ValidationError(
+        `User with id "${userId}" does not exist`,
+        { code: "NONEXISTENT_USER" }
+      );
+    }
+  } catch(err) {
+    // Database unique constraint violation, username already taken
+    if (err.code === '23505') { 
+      throw new errors.ValidationError(
+        `"${newUsername}" is already taken`,
+        { 
+          code: "USERNAME_TAKEN",
+          status: 409,
+        }
+      );
+    }
 
-  if (result.rowCount === 0) {
-    throw new errors.ValidationError(
-      `User with id "${userId}" does not exist`,
-      { code: "NONEXISTENT_USER" }
-    );
+    throw err;
   }
 }
 

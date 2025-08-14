@@ -32,17 +32,6 @@ signupRouter.post('/', async (req, res) => {
   }
 
   try {
-    const existingUser = await pool.query(
-      'SELECT id FROM users WHERE username = $1',
-      [username]
-    );
-
-    if (existingUser.rows.length > 0) {
-      return res.status(409).json({ 
-        error: 'Username already taken' 
-      });
-    }
-
     const passwordHash = await bcrypt.hash(password, consts.SALT_ROUNDS);
 
     const newUser = await pool.query(
@@ -80,14 +69,14 @@ signupRouter.post('/', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Signup error:', error);
-    // Handle specific database errors
-    if (error.code === '23505') { // Unique violation
+    // Database unique constraint violation, username already taken
+    if (error.code === '23505') { 
       return res.status(409).json({ 
         error: 'Username already taken' 
       });
     }
 
+    console.error('Signup error:', error);
     res.status(500).json({ 
       error: 'Error creating user. Please try again.' 
     });
