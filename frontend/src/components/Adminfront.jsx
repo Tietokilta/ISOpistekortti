@@ -93,10 +93,16 @@ function TogglableField({ task, tasks, setTasks, field }) {
     const handleSubmit = () => {
         //todo: update state of user list to have modified user in it
         // send a request to backend and if success change state of user in frontend
-        console.log("toggling", field, task.needs_admin_approval)
+        // console.log("toggling", field, task.needs_admin_approval)
         if (field === 'needs_admin_approval') {
-            //console.log({ ...param, 'needs_admin_approval': !param.needs_admin_approval })
-            setParam({ ...param, 'needs_admin_approval': !param.needs_admin_approval })
+            console.log({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
+            adminService.updateTask({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
+
+            var filtered = tasks.filter(function (value) {
+                return value.task_id != task.task_id;
+            })
+            filtered.push({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
+            setTasks(filtered.sort((a, b) => a.task_id - b.task_id))
         }
     };
 
