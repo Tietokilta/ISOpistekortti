@@ -37,7 +37,7 @@ const UserFront = ({ login, setLogin, user }) => {
 
   return (
     <div
-      className='flex flex-col items-center justify-center min-h-[120vh] py-8'
+      className='flex flex-col items-center justify-center py-8'
     >
       <h1 className="text-3xl font-bold">ISOpistekortti 🤯💯</h1>
       <div className="mt-6 space-y-4">
@@ -54,11 +54,6 @@ const UserFront = ({ login, setLogin, user }) => {
   )
 }
 
-// Kun appi käynnistyy täytyisi olla tapa tarkistaa onko käyttäjällä tokenia, jos on niin palautetaan kyseinen käyttäjä
-// App
-// - login
-//   - user
-//   - admin
 
 const App = () => {
   const [login, setLogin] = useState(true) //don't show login on default, try to use cookies
@@ -85,7 +80,7 @@ const App = () => {
   if (login) {
     return (
       <div
-        className='flex flex-col items-center justify-center min-h-2/3 py-8'
+        className='flex flex-col items-center py-8'
       >
         <h1 className="text-3xl font-bold mb-4">ISOpistekortti 🤯💯</h1>
         <Login login={login} setLogin={setLogin} setUser={setUser} />
@@ -94,12 +89,22 @@ const App = () => {
   }
   else if (!login && user.is_admin) {
     return (
-      <AdminFront login={login} setLogin={setLogin} />
+      <div
+        className='flex flex-col items-center py-8'
+      >
+        <AdminFront login={login} setLogin={setLogin} />
+      </div>
     )
   }
   else {
     return (
+      <div className="flex flex-col min-h-screen">
+      <div
+        className='flex-grow flex flex-col items-center justify-start py-4 px-2'
+      >
       <UserFront login={login} setLogin={setLogin} user={user} setUser={setUser}/>
+      </div>
+      </div>
     )
   }
 

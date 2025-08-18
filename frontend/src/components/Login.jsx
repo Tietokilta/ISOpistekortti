@@ -38,7 +38,7 @@ const Login = ({ login, setLogin, setUser }) => {
             setUser({user_id : data.user_id, username : data.username, name : data.name, is_admin: data.is_admin})
         }
         else {
-            showTemporaryMessage('Invalid username or password')
+            showTemporaryMessage('Invalid username or password, forgot password, please contact ISOvastaava')
         }
     }
 
@@ -59,7 +59,7 @@ const Login = ({ login, setLogin, setUser }) => {
             if (response.status === 201) {
                 setLogin(!login)
             }
-            else if (response.status === 400) {
+            else if (response.status === 422) {
                 //console.log(response.data.message)
                 showTemporaryMessage(response.data.message)
             }

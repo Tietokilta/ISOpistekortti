@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { data } from 'react-router-dom'
 const baseUrl = '/api/admin'
 
 const getTasks = async () => {
@@ -14,4 +15,16 @@ const getTasks = async () => {
     }
 }
 
-export default { getTasks }
+const updateTask = async (task) => {
+    try {
+        const request = await axios.put(baseUrl + '/tasks', task)
+        console.log("tasks", request.data)
+        return request
+    }
+    catch (error) {
+        //console.log(error)
+        return error.request?.status;
+    }
+}
+
+export default { getTasks, updateTask }
