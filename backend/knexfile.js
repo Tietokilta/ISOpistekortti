@@ -18,26 +18,30 @@ development = {
   },
 };
 
-production = {
-  client: "pg",
-  connection: {
-    host: DB_URL,
-    user: DB_USER,
-    password: DB_PASSWORD,
-    database: DB_DATABASE,
+// Only evaluate this if it will be used (ie. node_env === "production")
+// because a dev may not have the certificates anywhere
+production = process.env.NODE_ENV === "production"
+  ? {
+    client: "pg",
+    connection: {
+      host: DB_URL,
+      user: DB_USER,
+      password: DB_PASSWORD,
+      database: DB_DATABASE,
 
-    ssl: { 
-      rejectUnauthorized: true, 
-      ca: fs.readFileSync(CA_PATH).toString(),
+      ssl: { 
+        rejectUnauthorized: true, 
+        ca: fs.readFileSync(CA_PATH).toString(),
+      },
     },
-  },
-  migrations: {
-    directory: path.join(__dirname, "migrations"),
-  },
-  seeds: {
-    directory: path.join(__dirname, "seeds"),
-  },
-};
+    migrations: {
+      directory: path.join(__dirname, "migrations"),
+    },
+    seeds: {
+      directory: path.join(__dirname, "seeds"),
+    },
+  }
+  : {};
 
 module.exports = {
   development,
