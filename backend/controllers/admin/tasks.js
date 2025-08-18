@@ -5,7 +5,7 @@ const pool = require("../../db");
 module.exports = (adminRouter) => {
   adminRouter.post("/tasks", async (request, response) => {
     const body = request.body;
-    if ( !(body.title && body.description && body.needs_admin_approval) ) {
+    if ( body.title == null || body.description == null || body.needs_admin_approval == null ) {
       return response.status(400).send({ error: "'title', 'description', or 'needs_admin_approval' missing from body" });
     }
 
@@ -26,7 +26,7 @@ module.exports = (adminRouter) => {
   adminRouter.put("/tasks", async (request, response) => {
     const body = request.body;
 
-    if ( !(body.task_id != null && body.title && body.description && body.needs_admin_approval) ) {
+    if ( body.task_id == null || body.title == null || body.description == null || body.needs_admin_approval == null ) {
       return response.status(400).json({ error: "Missing 'task_id', 'title', 'description', or 'needs_admin_approval' from request"});
     }
 
