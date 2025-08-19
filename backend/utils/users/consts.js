@@ -12,7 +12,12 @@ const USERNAME_CHECKS = [
   {checkFn: (username) => { return /^[a-zA-Z]/.test(username) }, message: "Username must start with a letter"},
 ];
 
+const REALNAME_CHECKS = [
+  {checkFn: (realname) => { return realname.length <= 200 }, message: "Name must be at most 200 characters long"},
+]
+
 module.exports = {
   PASSWORD_CHECKS,
   USERNAME_CHECKS,
+  REALNAME_CHECKS,
 }
