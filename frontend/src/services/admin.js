@@ -41,4 +41,16 @@ const createTask = async (task) => {
     }
 }
 
-export default { getTasks, updateTask, createTask }
+const deleteTask = async (task) => {
+    try {
+        console.log(task)
+        const request = await axios.delete(baseUrl + '/tasks/' + task.id)
+        return request
+    }
+    catch (error) {
+        console.log(error)
+        return error.request?.status;
+    }
+}
+
+export default { getTasks, updateTask, createTask, deleteTask }
