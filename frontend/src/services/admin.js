@@ -3,10 +3,10 @@ import { data } from 'react-router-dom'
 const baseUrl = '/api/admin'
 
 const getTasks = async () => {
-    console.log("getting tasks")
+    //console.log("getting tasks")
     try {
         const request = await axios.get(baseUrl + '/tasks')
-        console.log("tasks", request.data)
+        //console.log("tasks", request.data)
         return request
     }
     catch (error) {
@@ -16,10 +16,10 @@ const getTasks = async () => {
 }
 
 const updateTask = async (task) => {
-    const data = { ...task, task_id: task.id } 
+    const data = { ...task, task_id: task.id }
     try {
-        const request = await axios.put(baseUrl + '/tasks', task)
-        console.log("tasks", request.data)
+        const request = await axios.put(baseUrl + '/tasks', data)
+        //console.log("tasks", request.data)
         return request
     }
     catch (error) {
@@ -28,4 +28,17 @@ const updateTask = async (task) => {
     }
 }
 
-export default { getTasks, updateTask }
+const createTask = async (task) => {
+    console.log(task)
+    try {
+        const request = await axios.post(baseUrl + '/tasks', task)
+        //console.log(request)
+        return request
+    }
+    catch (error) {
+        console.log(error)
+        return error.request?.status;
+    }
+}
+
+export default { getTasks, updateTask, createTask }
