@@ -61,18 +61,10 @@ const checkAdminPrivileges = async (request, response, next) => {
   return next();
 }
 
-function ignoreFavicon(req, res, next) {
-  if (req.originalUrl.includes('favicon.ico')) {
-    return res.status(204).end()
-  }
-  next();
-}
-
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
   checkAuthToken,
   checkAdminPrivileges,
-  ignoreFavicon
 }
