@@ -159,6 +159,20 @@ const AcceptButton = ({ taskUser }) => {
 const TaskCard = ({ task, tasks, setTasks }) => {
     const [isOpen, setIsOpen] = useState(false);
 
+    const deleteTask = async (task) => {
+        const result = await adminService.deleteTask(task)
+        console.log(result)
+        if (result.status == 200) {
+            var filtered = tasks.filter(function (value) {
+                return value.id != task.id;
+            })
+            setTasks(filtered.sort((a, b) => a.id - b.id))
+        }
+        else {
+            console.log(result)
+        }
+    }
+
     return (
         <div className="bg-gray-400 p-4 rounded-2xl shadow-lg w-full mb-4">
             <button
@@ -204,6 +218,14 @@ const TaskCard = ({ task, tasks, setTasks }) => {
                             setTasks={setTasks}
                             field={"needs_admin_approval"}
                         />
+                    </div>
+                    <div>
+                        <button
+                            onClick={() => deleteTask(task)}
+                            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                        >
+                            Delete
+                        </button>
                     </div>
                 </div>
             )}
