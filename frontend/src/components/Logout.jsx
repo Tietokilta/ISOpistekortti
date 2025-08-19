@@ -16,10 +16,11 @@ export function Logout({ setLogin }) {
 
   const handleSavePassword = async () => {
     setError("")
-    result = await passwordService.changePassword(newPassword)
+    const result = await passwordService.changePassword(newPassword)
       .then(result => {
         if (result.status === 200) {
           // assuming tasks are in result.data
+          setLogin(true)
           console.log("success")
         }
         else if (result.status === 422) {
@@ -27,12 +28,12 @@ export function Logout({ setLogin }) {
         }
       })
       .catch(error => {
-        console.log(error.response.data.details)
+        //console.log(error.response.data.details)
         setError(error.response.data.details)
       });
 
-    setShowInput(false);
-    setNewPassword("");
+    setShowInput(false)
+    setNewPassword("")
   }
 
   return (

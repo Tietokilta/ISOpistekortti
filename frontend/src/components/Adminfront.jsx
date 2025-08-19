@@ -14,11 +14,12 @@
 
 import { useState, useEffect } from 'react'
 import { Logout } from "./Logout"
+import { AddTask } from "./AddTask.jsx"
 import adminService from "../services/admin.js"
 import taskService from "../services/tasks.js"
 
 
-function EditableField({ name, user, setUser, updateUserList, updatedParam, task, setTasks }) {
+function EditableField({ name, user, setUser, updateUserList, updatedParam, task, tasks, setTasks }) {
     const [isEditing, setIsEditing] = useState(false);
     const [inputValue, setInputValue] = useState('');
 
@@ -30,7 +31,7 @@ function EditableField({ name, user, setUser, updateUserList, updatedParam, task
         setInputValue(e.target.value);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         //todo: update state of user list to have modified user in it
         // send a request to backend and if success change state of user in frontend
         console.log('New value:', inputValue);
@@ -40,9 +41,18 @@ function EditableField({ name, user, setUser, updateUserList, updatedParam, task
             setIsEditing(false);
         }
         if (task) {
-            console.log({ ...user, [updatedParam]: inputValue })
-            setTasks({ ...task, [updatedParam]: inputValue })
-            setIsEditing(false);
+            const result = await adminService.updateTask({ ...task, [updatedParam]: inputValue })
+            if (result.status == 201) {
+                var filtered = tasks.filter(function (value) {
+                    return value.id != task.id;
+                })
+                filtered.push({ ...task, [updatedParam]: inputValue })
+                setTasks(filtered.sort((a, b) => a.id - b.id))
+                setIsEditing(false);
+            }
+            else {
+                console.log(result)
+            }
         }
     };
 
@@ -95,10 +105,8 @@ function TogglableField({ task, tasks, setTasks, field }) {
         // send a request to backend and if success change state of user in frontend
         // console.log("toggling", field, task.needs_admin_approval)
         if (field === 'needs_admin_approval') {
-            console.log({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
             const result = await adminService.updateTask({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
-
-            if (result.status == 200) {
+            if (result.status == 201) {
                 var filtered = tasks.filter(function (value) {
                     return value.id != task.id;
                 })
@@ -287,7 +295,7 @@ const UserCard = ({ userFromList }) => {
     )
 }
 
-const Container = ({ title, tasks, setTasks = { setTasks } }) => {
+const Container = ({ title, tasks, setTasks }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <div className="p-6 rounded-2xl shadow-lg w-150 bg-white mb-4">
@@ -332,34 +340,17 @@ export function AdminFront({ setLogin, login }) {
     const [tasks, setTasks] = useState([])
 
     useEffect(() => {
-        taskService.getAll()
-            .then(result => {
-                if (result.status === 200) {
-                    setTasks(result.data);  // assuming tasks are in result.data
-                }
-                else if (result.status === 401) {
-                    setLogin(!login)
-                }
-                else {
-                    //if not ok show login form
-
-                    console.warn('Unexpected status:', result.status);
-                }
-            })
-            .catch(error => {
-                setLogin(!login)
-            });
         adminService.getTasks()
             .then(result => {
                 if (result.status === 200) {
-                    setTasks(result.data.tasks)
+                    setTasks(result.data.tasks.sort((a, b) => a.id - b.id))
                 }
             })
             .catch(error => {
                 console.log(error)
             })
     }, []);
-    console.log(tasks)
+    console.log("taskit:", tasks)
 
     return (
         <div className="flex flex-col items-center justify-center">
@@ -367,6 +358,10 @@ export function AdminFront({ setLogin, login }) {
             <Container title={"Users"} />
             <Container title={"Tasks"} tasks={tasks} setTasks={setTasks} />
             <Container title={"Accept requested credits"} />
+            <AddTask
+                tasks={tasks}
+                setTasks={setTasks}
+            />
             <Logout setLogin={setLogin} />
         </div>
     )
