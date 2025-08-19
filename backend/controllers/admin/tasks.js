@@ -2,6 +2,11 @@ const taskService = require("../../utils/tasks/taskService");
 const consts = require("../../utils/tasks/consts");
 const pool = require("../../db");
 
+function isValidInt(val) {
+  const num = Number(val);
+  return (!Number.isNaN(num) && Number.isInteger(num));
+}
+
 module.exports = (adminRouter) => {
   adminRouter.post("/tasks", async (request, response) => {
     const body = request.body;
@@ -48,16 +53,16 @@ module.exports = (adminRouter) => {
     }
   });
 
-  adminRouter.delete("/tasks", async (request, response) => {
-    const body = request.body;
-    if (body.task_id == null) {
-      return response.status(400).json({ error: "'task_id' missing from request body" });
+  adminRouter.delete("/tasks/:taskId", async (request, response) => {
+    const taskId = request.params.taskId
+    if (!isValidInt(taskId)) {
+      return response.status(400).json({ error: "Provided task id is not an integer"});
     }
 
     try {
-      const result = await taskService.deleteTask(body.task_id);
+      const result = await taskService.deleteTask(taskId);
       if (result.rowCount === 0) {
-        return response.status(404).json({ error: `Task with id ${body.task_id} not found`});
+        return response.status(404).json({ error: `Task with id ${taskId} not found`});
       }
 
       return response.status(200).json({ message: "Task deleted successfully" });
