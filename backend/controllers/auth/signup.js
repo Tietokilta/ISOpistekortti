@@ -3,8 +3,18 @@ const pool = require('../../db');
 const signupRouter = require('express').Router();
 const { generateTokens } = require('../../utils/auth/tokenService');
 const consts = require('../../utils/auth/consts');
-const { validateUsername, validatePassword } = require("../../utils/users/validation");
+const { validateUsername, validatePassword, validateRealname} = require("../../utils/users/validation");
 
+function respondErrorIfValidationFailed(response, failedChecks) {
+  if (failedChecks.length >= 1) {
+    response.status(400).json({
+      message: failedChecks[0],
+    })
+    return true;
+  }
+
+  return false;
+}
 
 signupRouter.post('/', async (req, res) => {
   const { username, password, name } = req.body;
@@ -15,21 +25,17 @@ signupRouter.post('/', async (req, res) => {
     });
   }
 
+  const failedRealnameChecks = validateRealname(name);
+  if (respondErrorIfValidationFailed(res, failedRealnameChecks))
+    return;
+
   const failedUsernameChecks = validateUsername(username);
-  if (failedUsernameChecks.length >= 1) {
-    return res.status(400).json({
-      message: failedUsernameChecks[0],
-      failedUsernameChecks,
-    });
-  }
+  if (respondErrorIfValidationFailed(res, failedUsernameChecks))
+    return;
 
   const failedPasswordChecks = validatePassword(password);
-  if (failedPasswordChecks.length >= 1) {
-    return res.status(400).json({
-      message: failedPasswordChecks[0],
-      failedPasswordChecks,
-    });
-  }
+  if (respondErrorIfValidationFailed(res, failedPasswordChecks))
+    return;
 
   try {
     const passwordHash = await bcrypt.hash(password, consts.SALT_ROUNDS);

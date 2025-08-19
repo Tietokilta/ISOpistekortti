@@ -1,36 +1,34 @@
 const consts = require("./consts");
 
-function validateUsername(username) {
-  if (typeof username !== "string") {
-    return ["Username must be a string"];
+function validateInput(input, inputName, inputTypeShouldBe, checks) {
+  if (typeof input !== inputTypeShouldBe) {
+    return [ `${inputName} must be a ${inputTypeShouldBe}` ];
   }
 
   var failedChecks = [];
-  for (const { checkFn, message } of consts.USERNAME_CHECKS) {
-    if (!checkFn(username)) {
-      failedChecks.push(message)
+  for (const { checkFn, message} of checks) {
+    if (!checkFn(input)) {
+      failedChecks.push(message);
     }
   }
 
   return failedChecks;
 }
 
+function validateUsername(username) {
+  return validateInput(username, "Username", "string", consts.USERNAME_CHECKS);
+}
+
 function validatePassword(password) {
-  if (typeof password !== "string") {
-    return ["Password must be a string"];
-  }
+  return validateInput(password, "Password", "string", consts.PASSWORD_CHECKS);
+}
 
-  var failedChecks = [];
-  for (const { checkFn, message } of consts.PASSWORD_CHECKS) {
-    if (!checkFn(password)) {
-      failedChecks.push(message)
-    }
-  }
-
-  return failedChecks;
+function validateRealname(realname) {
+  return validateInput(realname, "Name", "string", consts.REALNAME_CHECKS);
 }
 
 module.exports = {
   validatePassword,
   validateUsername,
+  validateRealname,
 }
