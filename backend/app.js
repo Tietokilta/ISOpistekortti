@@ -20,8 +20,6 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use(middleWare.requestLogger)
-//prevents the get favicon
-app.use(middleWare.ignoreFavicon)
 
 app.use('/api/login', loginRouter)
 app.use('/api/logout', logoutRouter)
