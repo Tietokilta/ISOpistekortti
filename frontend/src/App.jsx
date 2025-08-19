@@ -10,7 +10,7 @@ import { data } from 'react-router-dom';
 
 
 
-const UserFront = ({ login, setLogin, user }) => {
+const UserFront = ({ login, setLogin }) => {
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
@@ -41,8 +41,9 @@ const UserFront = ({ login, setLogin, user }) => {
     >
       <h1 className="text-3xl font-bold">ISOpistekortti 🤯💯</h1>
       <div className="mt-6 space-y-4">
-        {tasks.map(task =>
+        {tasks.map((task, index) =>
           <Card
+            key={index}
             task={task}
             tasks={tasks}
             setTasks={setTasks}

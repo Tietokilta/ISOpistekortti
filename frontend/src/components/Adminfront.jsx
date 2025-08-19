@@ -18,7 +18,7 @@ import adminService from "../services/admin.js"
 import taskService from "../services/tasks.js"
 
 
-function EditableField({ name, user, setUser, updateUserList, updatedParam, task, setTask }) {
+function EditableField({ name, user, setUser, updateUserList, updatedParam, task, setTasks }) {
     const [isEditing, setIsEditing] = useState(false);
     const [inputValue, setInputValue] = useState('');
 
@@ -41,7 +41,7 @@ function EditableField({ name, user, setUser, updateUserList, updatedParam, task
         }
         if (task) {
             console.log({ ...user, [updatedParam]: inputValue })
-            setTask({ ...task, [updatedParam]: inputValue })
+            setTasks({ ...task, [updatedParam]: inputValue })
             setIsEditing(false);
         }
     };
@@ -90,19 +90,24 @@ function EditableField({ name, user, setUser, updateUserList, updatedParam, task
 }
 
 function TogglableField({ task, tasks, setTasks, field }) {
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         //todo: update state of user list to have modified user in it
         // send a request to backend and if success change state of user in frontend
         // console.log("toggling", field, task.needs_admin_approval)
         if (field === 'needs_admin_approval') {
             console.log({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
-            adminService.updateTask({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
+            const result = await adminService.updateTask({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
 
-            var filtered = tasks.filter(function (value) {
-                return value.task_id != task.task_id;
-            })
-            filtered.push({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
-            setTasks(filtered.sort((a, b) => a.task_id - b.task_id))
+            if (result.status == 200) {
+                var filtered = tasks.filter(function (value) {
+                    return value.id != task.id;
+                })
+                filtered.push({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
+                setTasks(filtered.sort((a, b) => a.id - b.id))
+            }
+            else {
+                console.log(result)
+            }
         }
     };
 

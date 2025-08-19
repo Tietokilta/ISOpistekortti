@@ -16,6 +16,7 @@ const getTasks = async () => {
 }
 
 const updateTask = async (task) => {
+    const data = { ...task, task_id: task.id } 
     try {
         const request = await axios.put(baseUrl + '/tasks', task)
         console.log("tasks", request.data)
