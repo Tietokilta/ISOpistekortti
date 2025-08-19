@@ -5,6 +5,7 @@ on:
 
 jobs:
   isopistekortti:
+    name: Build image check
     runs-on: ubuntu-latest
 
     steps:
