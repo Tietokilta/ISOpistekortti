@@ -59,7 +59,7 @@ const Login = ({ login, setLogin, setUser }) => {
             if (response.status === 201) {
                 setLogin(!login)
             }
-            else if (response.status === 422) {
+            else if (response.status === 400) {
                 //console.log(response.data.message)
                 showTemporaryMessage(response.data.message)
             }
