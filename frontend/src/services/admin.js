@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { use } from 'react'
-import { data } from 'react-router-dom'
 const baseUrl = '/api/admin'
 
 const getTasks = async () => {

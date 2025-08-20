@@ -6,7 +6,7 @@ let
   frontend = buildNpmPackage {
     name = "isopistekortti-frontend";
     src = ./frontend;
-    npmDepsHash = "sha256-WIu8ZykkdkCfBuyAFyhr8ato6P8NNUmyo5asI60pDU0=";
+    npmDepsHash = "sha256-7kcYh3dtH1TFaQFxN1njoASjsCt/eTq0aA1d3Xe2s20=";
 
     installPhase = ''
       runHook preInstall

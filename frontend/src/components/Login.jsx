@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import loginService from '../services/login'
 import userService from '../services/users'
-import { resolvePath } from 'react-router-dom'
 
 const Button = ({ name, state, setState }) => {
     return (
