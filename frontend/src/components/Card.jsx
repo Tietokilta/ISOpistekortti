@@ -8,7 +8,10 @@ export function Card({ task, tasks, setTasks }) {
 
   //different buttons for different types of tasks
   return (
-    <div className="p-6 rounded-2xl shadow-lg w-80 bg-white mb-4">
+    <div
+      className={`p-6 rounded-2xl shadow-lg w-80 mb-4 ${task.status === "done" ? "bg-green-400" : "bg-white"
+        }`}
+    >
       <button
         className="w-full text-left flex justify-between items-center font-bold text-gray-900 text-lg p-4 border-b"
         onClick={() => setIsOpen(!isOpen)}

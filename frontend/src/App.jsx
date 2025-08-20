@@ -4,6 +4,7 @@ import { Card } from './components/Card';
 import Login from './components/Login';
 import { AdminFront } from './components/Adminfront'
 import { Logout } from './components/Logout';
+import { TaskProgress } from './components/TaskProgress';
 import taskService from './services/tasks'
 import loginService from './services/login';
 import { data } from 'react-router-dom';
@@ -40,6 +41,7 @@ const UserFront = ({ login, setLogin }) => {
       className='flex flex-col items-center justify-center py-8'
     >
       <h1 className="text-3xl font-bold">ISOpistekortti 🤯💯</h1>
+      <TaskProgress completed={tasks.reduce((acc, task) => (task.status === 'done' ? acc + 1 : acc), 0)} total={tasks.length}/>
       <div className="mt-6 space-y-4">
         {tasks.map((task, index) =>
           <Card
