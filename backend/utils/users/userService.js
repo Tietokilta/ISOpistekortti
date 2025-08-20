@@ -1,4 +1,5 @@
-const { validateUsername, validatePassword } = require("./validation");
+const ld = require("lodash");
+const { validateUsername, validatePassword, validateRealname } = require("./validation");
 const { invalidateUserRefreshTokens } = require("../auth/tokenService");
 const bcrypt = require('bcrypt');
 const errors = require("../errors");
@@ -17,14 +18,62 @@ async function getAllUsersAndCompletedTasks() {
   `, [taskConsts.TASK_STATUS.DONE]);
 }
 
-async function changeUsername(userId, newUsername) {
+function throwIfValidationFailed(message, failedChecks, errorCode) {
+  if (failedChecks.length === 0) return;
+
+  throw new errors.ValidationError(
+    message,
+    { code: errorCode, details: failedChecks, }
+  );
+}
+
+async function changeUserData(userId, newName, newUsername, newIsAdmin) {
   const failedUsernameChecks = validateUsername(newUsername);
-  if (failedUsernameChecks.length >= 1) {
+  throwIfValidationFailed(`"${newUsername}" is not a valid username`, failedUsernameChecks, "INVALID_USERNAME");
+
+  const failedRealnameChecks = validateRealname(newName);
+  throwIfValidationFailed(`"${newName}" is not a valid name`, failedRealnameChecks, "INVALID_NAME");
+
+  if (!ld.isBoolean(newIsAdmin)) {
     throw new errors.ValidationError(
-      `"${newUsername}" is not a valid username`,
-      { code: "INVALID_USERNAME", details: failedUsernameChecks, }
+      "New admin value is not a boolean",
+      { status: 400, }
     );
   }
+
+  try {
+    const result = await pool.query(`
+      UPDATE users
+      SET username = $1, name = $2, is_admin = $3
+      WHERE id = $4;
+    `, [newUsername, newName, newIsAdmin, userId]);
+
+    if (result.rowCount === 0) {
+      throw new errors.ValidationError(
+        `User with id "${userId}" does not exist`,
+        { code: "NONEXISTENT_USER" }
+      );
+    }
+  } catch(err) {
+    // Database unique constraint violation, username already taken
+    if (err.code === '23505') { 
+      throw new errors.ValidationError(
+        `"${newUsername}" is already taken`,
+        { 
+          code: "USERNAME_TAKEN",
+          status: 409,
+        }
+      );
+    }
+
+    throw err;
+  }
+
+}
+
+async function changeUsername(userId, newUsername) {
+  const failedUsernameChecks = validateUsername(newUsername);
+  throwIfValidationFailed(`"${newUsername}" is not a valid username`, failedUsernameChecks, "INVALID_USERNAME");
 
   try {
     const result = await pool.query(
@@ -58,13 +107,7 @@ async function changeUsername(userId, newUsername) {
 
 async function changePassword(userId, newPassword) {
   const failedPasswordChecks = validatePassword(newPassword);
-
-  if (failedPasswordChecks.length >= 1) {
-    throw new errors.ValidationError(
-      `Invalid password`,
-      { code: "INVALID_PASSWORD", details: failedPasswordChecks, }
-    );
-  }
+  throwIfValidationFailed(`Invalid password`, failedPasswordChecks, "INVALID_PASSWORD");
 
   // Change password -> Log out all sessions. The 15 minute access tokens stay valid,
   // but after they expire, user is logged out
@@ -91,4 +134,5 @@ module.exports = {
   getAllUsersAndCompletedTasks,
   changeUsername,
   changePassword,
+  changeUserData,
 };
