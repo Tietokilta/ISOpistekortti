@@ -1,15 +1,20 @@
 const { validateUsername, validatePassword } = require("./validation");
-const { invlidateUserRefreshTokens, invalidateUserRefreshTokens } = require("../auth/tokenService");
+const { invalidateUserRefreshTokens } = require("../auth/tokenService");
 const bcrypt = require('bcrypt');
 const errors = require("../errors");
 const pool = require('../../db');
 const authConsts = require('../auth/consts');
+const taskConsts = require("../tasks/consts");
 
-async function getAllUsers() {
+async function getAllUsersAndCompletedTasks() {
   return await pool.query(`
-    SELECT id, username, name, is_admin
-    FROM users
-  `)
+    SELECT u.id, username, u.name, u.is_admin, COUNT(tu.id) AS completed_tasks
+    FROM users u
+    LEFT JOIN task_user tu
+    ON tu.user_id = u.id AND tu.status = $1
+    GROUP BY u.id
+    ORDER BY completed_tasks DESC;
+  `, [taskConsts.TASK_STATUS.DONE]);
 }
 
 async function changeUsername(userId, newUsername) {
@@ -83,7 +88,7 @@ async function changePassword(userId, newPassword) {
 }
 
 module.exports = { 
-  getAllUsers,
+  getAllUsersAndCompletedTasks,
   changeUsername,
   changePassword,
 };

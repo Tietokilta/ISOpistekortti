@@ -1,4 +1,4 @@
-const { getAllUsers, changeUsername, changePassword } = require("../../utils/users/userService");
+const { getAllUsersAndCompletedTasks, changeUsername, changePassword } = require("../../utils/users/userService");
 const errors = require("../../utils/errors");
 
 function isValidInt(val) {
@@ -10,7 +10,7 @@ module.exports = (adminRouter) => {
 
   adminRouter.get("/users", async (request, response) => {
     try {
-      const result = await getAllUsers();
+      const result = await getAllUsersAndCompletedTasks();
       return response.status(200).json({ users: result.rows, });
     } catch (err) {
       console.error(err);
