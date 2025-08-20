@@ -5,6 +5,7 @@ import Login from './components/Login';
 import { AdminFront } from './components/Adminfront'
 import { Logout } from './components/Logout';
 import { TaskProgress } from './components/TaskProgress';
+import { ShinyText } from './components/Shinytext';
 import taskService from './services/tasks'
 import loginService from './services/login';
 import { data } from 'react-router-dom';
@@ -40,7 +41,8 @@ const UserFront = ({ login, setLogin }) => {
     <div
       className='flex flex-col items-center justify-center py-8'
     >
-      <h1 className="text-3xl font-bold">ISOpistekortti 🤯💯</h1>
+      <ShinyText text={"ISOpistekortti 🤯💯"} disabled={false} speed={3} className="text-3xl font-bold mb-4"/>
+
       <TaskProgress completed={tasks.reduce((acc, task) => (task.status === 'done' ? acc + 1 : acc), 0)} total={tasks.length}/>
       <div className="mt-6 space-y-4">
         {tasks.map((task, index) =>
@@ -85,7 +87,8 @@ const App = () => {
       <div
         className='flex flex-col items-center py-8'
       >
-        <h1 className="text-3xl font-bold mb-4">ISOpistekortti 🤯💯</h1>
+        <h1 ></h1>
+        <ShinyText text={"ISOpistekortti 🤯💯"} disabled={false} speed={3} className="text-3xl font-bold mb-4"/>
         <Login login={login} setLogin={setLogin} setUser={setUser} />
       </div>
     )
