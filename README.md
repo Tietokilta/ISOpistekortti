@@ -95,4 +95,4 @@ which has an executable `isopistekortti` in `$out/bin`. This package can be buil
 
 `docker` is a layered Docker image that runs the aforementioned `isopistekortti`
 executable. This package is also the image that gets built and published by the CI/CD
-pipeline, and is used in production. This package can be built with `nix build .#isopistekortti`
+pipeline, and is used in production. This package can be built with `nix build .#docker`
