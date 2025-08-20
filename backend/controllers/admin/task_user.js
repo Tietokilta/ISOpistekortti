@@ -1,11 +1,30 @@
 const { isValidStatus } = require("../../utils/tasks/validation");
-const { changeTaskUserStatus } = require("../../utils/tasks/taskService");
+const { changeTaskUserStatus, getTaskUsersForUser } = require("../../utils/tasks/taskService");
 
 module.exports = (adminRouter) => {
-  adminRouter.patch("/task_user/:task_user_id", async (request, response) => {
-    const taskUserId = parseInt(request.params.task_user_id, 10);
+  adminRouter.get("/task_user/:userId", async (request, response) => {
+    const userId = parseInt(request.params.userId, 10);
+    if (Number.isNaN(userId)) {
+      return response.status(400).json({ error: "userId must be an integer", });
+    }
+
+    try {
+      const result = await getTaskUsersForUser(userId);
+      if (result.rowCount === 0) {
+        return response.status(404).json({ error: `User with id ${userId} not found`})
+      }
+      return response.status(200).json({ task_users: result.rows, });
+
+    } catch(err) {
+      console.error(err);
+      return response.status(500).json( { error: "Internal server error" });
+    }
+  });
+
+  adminRouter.patch("/task_user/:taskUserId", async (request, response) => {
+    const taskUserId = parseInt(request.params.taskUserId, 10);
     if (Number.isNaN(taskUserId)) {
-      return response.status(400).json({ error: "task_user_id must be an integer", });
+      return response.status(400).json({ error: "taskUserId must be an integer", });
     }
 
     const body = request.body;
