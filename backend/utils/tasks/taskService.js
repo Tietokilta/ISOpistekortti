@@ -55,10 +55,20 @@ const getTasks = async () => {
   `);
 };
 
+const getTaskUsersForUser = async (userId) => {
+  return await pool.query(`
+    SELECT *
+    FROM task_user
+    WHERE user_id = $1
+    ORDER BY task_id
+  `, [userId]);
+};
+
 module.exports = {
   changeTaskUserStatus,
   createTask,
   updateTask,
   deleteTask,
   getTasks,
+  getTaskUsersForUser,
 };
