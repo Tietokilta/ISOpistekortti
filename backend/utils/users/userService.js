@@ -14,7 +14,7 @@ async function getAllUsersAndCompletedTasks() {
     LEFT JOIN task_user tu
     ON tu.user_id = u.id AND tu.status = $1
     GROUP BY u.id
-    ORDER BY completed_tasks DESC;
+    ORDER BY completed_tasks DESC, u.id ASC;
   `, [taskConsts.TASK_STATUS.DONE]);
 }
 
