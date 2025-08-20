@@ -3,6 +3,7 @@ const PASSWORD_CHECKS = [
   {checkFn: (pw) => { return /[a-z]/.test(pw); }, message: "Password must have at least one lowercase letter"},
   {checkFn: (pw) => { return /[0-9]/.test(pw); }, message: "Password must have at least one number"},
   {checkFn: (pw) => { return /.{8}/.test(pw); }, message: "Password must have at least 8 characters"},
+  {checkFn: (pw) => { return pw.length <= 200; }, message: "Password must have at most 200 characters"},
 ];
 
 const USERNAME_CHECKS = [
