@@ -27,7 +27,6 @@ module.exports = (tasksRouter) => {
   tasksRouter.post('/task_user', async (request, response) => {
     const body = request.body
     if (body == null) {
-      console.log("request did not have a body");
       return response.status(400).json({error: "Request is missing a body"});
     }
 
@@ -36,7 +35,6 @@ module.exports = (tasksRouter) => {
     const user = request.user;
 
     if (task_id == null || new_task_status == null) {
-      console.log("'body.task_id', or 'body.new_task_status' missing");
       return response.status(400).json({error: "Body is missing 'task_id' or 'new_task_status'"});
     }
 
@@ -58,7 +56,6 @@ module.exports = (tasksRouter) => {
       const task_info = result.rows[0];
 
       if (!task_info) {
-        console.log(`No task id ${task_id} found for user id ${user.id}`);
         return response.status(404).json({
           error: 'Task not found',
         });
@@ -69,7 +66,6 @@ module.exports = (tasksRouter) => {
         try {
           isValidStatusChange(task_info, new_task_status);
         } catch (err) {
-          console.log("Invalid status change: " + err.message);
           return response.status(err.status).json({
             error: err.message,
           });
