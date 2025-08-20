@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { use } from 'react'
 import { data } from 'react-router-dom'
 const baseUrl = '/api/admin'
 
@@ -53,4 +54,59 @@ const deleteTask = async (task) => {
     }
 }
 
-export default { getTasks, updateTask, createTask, deleteTask }
+const getUsers = async () => {
+    try {
+        const request = await axios.get(baseUrl + '/users')
+        return request
+    }
+    catch (error) {
+        return error.request?.status;
+    }
+}
+
+const updateUser = async (user) => {
+    const data = { ...user, user_id: user.id }
+    try {
+        const request = await axios.put(baseUrl + '/users', data)
+        console.log("users", request.data)
+        return request
+    }
+    catch (error) {
+        //console.log(error)
+        return error.request?.status;
+    }
+}
+
+const resetPassword = async (id, password) => {
+    const data = { password: password }
+    const request = await axios.post(baseUrl + '/users/' + id + '/password', data)
+    return request
+}
+
+const getTaskUsers = async () => {
+    try {
+        const request = await axios.get(baseUrl + '/requested_tasks')
+        return request
+    }
+    catch (error) {
+        return error.request?.status;
+    }
+}
+
+const handleRequestedTask = async (accepted, user) => {
+    try {
+        if (accepted) {
+            const request = await axios.patch(baseUrl + '/task_user/' + user.task_user_id, { new_task_status: "done" })
+        }
+        else {
+            const request = await axios.patch(baseUrl + '/task_user/' + user.task_user_id, { new_task_status: "rejected" })
+        }
+        
+        return request
+    }
+    catch (error) {
+        return error.request?.status;
+    }
+}
+
+export default { getTasks, updateTask, createTask, deleteTask, getUsers, updateUser, resetPassword, getTaskUsers, handleRequestedTask }

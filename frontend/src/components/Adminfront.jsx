@@ -15,11 +15,15 @@
 import { useState, useEffect } from 'react'
 import { Logout } from "./Logout"
 import { AddTask } from "./AddTask.jsx"
+import { ResetPassword } from './ResetPassword.jsx'
 import adminService from "../services/admin.js"
 import taskService from "../services/tasks.js"
+import tasks from '../services/tasks.js'
+import admin from '../services/admin.js'
 
 
-function EditableField({ name, user, setUser, updateUserList, updatedParam, task, tasks, setTasks }) {
+
+function EditableField({ name, user, setUsers, users, updatedParam, task, tasks, setTasks }) {
     const [isEditing, setIsEditing] = useState(false);
     const [inputValue, setInputValue] = useState('');
 
@@ -37,8 +41,20 @@ function EditableField({ name, user, setUser, updateUserList, updatedParam, task
         console.log('New value:', inputValue);
         if (user) {
             console.log({ ...user, [updatedParam]: inputValue })
-            setUser({ ...user, [updatedParam]: inputValue })
-            setIsEditing(false);
+            //setUser({ ...user, [updatedParam]: inputValue })
+
+            const result = await adminService.updateUser({ ...user, [updatedParam]: inputValue })
+            if (result.status == 201) {
+                var filtered = users.filter(function (value) {
+                    return value.id != user.id;
+                })
+                filtered.push({ ...user, [updatedParam]: inputValue })
+                setUsers(filtered)//.sort((a, b) => a.id - b.id))
+                setIsEditing(false);
+            }
+            else {
+                console.log(result)
+            }
         }
         if (task) {
             const result = await adminService.updateTask({ ...task, [updatedParam]: inputValue })
@@ -134,11 +150,22 @@ function TogglableField({ task, tasks, setTasks, field }) {
     );
 }
 
-const AcceptButton = ({ taskUser }) => {
-    const handleSubmit = () => {
-        //todo: update state of user list to have modified user in it
-        // send a request to backend and if success change state of user in frontend
-        console.log("accepted")
+const AcceptButton = ({ user, task_users, setTask_users }) => {
+    const handleSubmit = async (bool) => {
+        const result = await adminService.handleRequestedTask(bool, user)
+        console.log("res:", result)
+        return
+        if (result.status == 201) {
+            var filtered = tasks.filter(function (value) {
+                return value.id != task.id;
+            })
+            filtered.push({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
+            setTasks(filtered.sort((a, b) => a.id - b.id))
+        }
+        else {
+            console.log(result)
+        }
+
     };
 
     return (
@@ -146,10 +173,17 @@ const AcceptButton = ({ taskUser }) => {
             <div className="flex gap-2 items-center">
 
                 <button
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit(true)}
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                     Accept
+                </button>
+
+                <button
+                    onClick={() => handleSubmit(false)}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                    Reject
                 </button>
             </div>
         </div>
@@ -233,28 +267,22 @@ const TaskCard = ({ task, tasks, setTasks }) => {
     );
 };
 
-const AcceptingCard = ({ taskUserFromList }) => {
-    const [taskUser, setTaskUser] = useState({})
+const AcceptingCard = ({ user, task_users, setTask_users }) => {
 
     return (
-        <div className="bg-gray-400 p-4 rounded-2xl shadow-lg w-1/1 mb-4">
+        <div className="bg-gray-400 p-1 rounded-2xl shadow-lg w-1/1 mb-4">
             <div
                 className="w-full text-left flex justify-between items-center font-bold text-gray-900 text-lg p-4"
             >
-                {"Alice, alicetest, do documentation"}
-                <AcceptButton taskUser={taskUser} setTaskUser={setTaskUser} />
+                {`${user.username}, ${user.task_title}`}
+                <AcceptButton user={user} task_users={task_users} setTask_users={setTask_users} />
             </div>
         </div>
     )
 }
 
-const UserCard = ({ userFromList }) => {
+const UserCard = ({ user, users, setUsers, }) => {
     const [isOpen, setIsOpen] = useState(false)
-    const [user, setUser] = useState({ user_id: "", username: "", name: "", is_admin: false })
-
-    useEffect(() => {
-        setUser({ user_id: "1", username: "alice", name: "alicetest", is_admin: false })
-    }, [])
 
     return (
         <div className="bg-gray-400 p-4 rounded-2xl shadow-lg w-1/1 mb-4">
@@ -262,7 +290,7 @@ const UserCard = ({ userFromList }) => {
                 className="w-full text-left flex justify-between items-center font-bold text-gray-900 text-lg p-4"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                {"Alice, alicetest"}
+                {user.name + ", " + user.username}
                 <span className={`transform transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}>
                     ▼
                 </span>
@@ -275,8 +303,8 @@ const UserCard = ({ userFromList }) => {
                         <EditableField
                             name={"Edit"}
                             user={user}
-                            setUser={setUser}
-                            updateUserList={[]}
+                            users={users}
+                            setUsers={setUsers}
                             updatedParam={"username"}
                         />
                     </div>
@@ -285,8 +313,8 @@ const UserCard = ({ userFromList }) => {
                         <EditableField
                             name={"Edit"}
                             user={user}
-                            setUser={setUser}
-                            updateUserList={[]}
+                            users={users}
+                            setUsers={setUsers}
                             updatedParam={"name"}
                         />
                     </div>
@@ -295,20 +323,14 @@ const UserCard = ({ userFromList }) => {
                         <EditableField
                             name={"Edit"}
                             user={user}
-                            setUser={setUser}
-                            updateUserList={[]}
+                            users={users}
+                            setUsers={setUsers}
                             updatedParam={"is_admin"}
                         />
                     </div>
+                    <ResetPassword id={user.id} />
 
-                    <button
-                        onClick={() => console.log("editing")}
-                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                    >
-                        Reset password
-                    </button>
-
-                    <p>Taskit näkyy sit tääl, suoritettu 1/2</p>
+                    <p><b>Has completed {user.completed_tasks} task(s)</b></p>
                     <li>task1: done</li>
                     <li>task2: not_done</li>
                 </div>
@@ -317,7 +339,7 @@ const UserCard = ({ userFromList }) => {
     )
 }
 
-const Container = ({ title, tasks, setTasks }) => {
+const Container = ({ title, tasks, setTasks, users, setUsers, task_users, setTask_users }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <div className="p-6 rounded-2xl shadow-lg w-150 bg-white mb-4">
@@ -346,10 +368,28 @@ const Container = ({ title, tasks, setTasks }) => {
                         </>
                     }
                     {title === 'Users' &&
-                        <UserCard />
+                        <>
+                            {users.map((user, index) => (
+                                <UserCard
+                                    key={index}
+                                    user={user}
+                                    users={users}
+                                    setUsers={setUsers}
+                                />
+                            ))}
+                        </>
                     }
                     {title === 'Accept requested credits' &&
-                        <AcceptingCard />
+                        <>
+                            {task_users.map((user, index) => (
+                                <AcceptingCard
+                                    key={index}
+                                    user={user}
+                                    task_users={task_users}
+                                    setTask_users={setTask_users}
+                                />
+                            ))}
+                        </>
                     }
                 </div>
             )}
@@ -358,8 +398,10 @@ const Container = ({ title, tasks, setTasks }) => {
 }
 
 
-export function AdminFront({ setLogin, login }) {
+export function AdminFront({ setLogin }) {
     const [tasks, setTasks] = useState([])
+    const [users, setUsers] = useState([])
+    const [task_users, setTask_users] = useState([])
 
     useEffect(() => {
         adminService.getTasks()
@@ -371,15 +413,34 @@ export function AdminFront({ setLogin, login }) {
             .catch(error => {
                 console.log(error)
             })
+        adminService.getUsers()
+            .then(result => {
+                if (result.status === 200) {
+                    //console.log("users:", result.data.users)
+                    setUsers(result.data.users)
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        adminService.getTaskUsers()
+            .then(result => {
+                if (result.status === 200) {
+                    console.log(result.data.requested_tasks)
+                    setTask_users(result.data.requested_tasks)
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }, []);
-    console.log("taskit:", tasks)
 
     return (
         <div className="flex flex-col items-center justify-center">
             <h1 className="text-white text-5xl mb-5">Admin Panel</h1>
-            <Container title={"Users"} />
+            <Container title={"Users"} users={users} setUsers={setUsers} />
             <Container title={"Tasks"} tasks={tasks} setTasks={setTasks} />
-            <Container title={"Accept requested credits"} />
+            <Container title={"Accept requested credits"} task_users={task_users} setTask_users={setTask_users} />
             <AddTask
                 tasks={tasks}
                 setTasks={setTasks}
