@@ -34,13 +34,11 @@ usersRouter.post("/password", async (request, response) => {
   const body = request.body
 
   if (body == null) {
-    console.log("request did not have a body");
     return response.status(400).json({error: "Request doesn't have a body"});
   }
 
   const newPassword = body.password;
   if (newPassword == null) {
-    console.log("Request did not have a password");
     return response.status(400).json({error: "Request does not have a password"});
   }
 

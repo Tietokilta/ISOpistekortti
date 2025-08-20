@@ -40,7 +40,6 @@ module.exports = (adminRouter) => {
 
     try {
       const result = await changeTaskUserStatus(taskUserId, body.new_task_status);
-      console.log(result)
       if (result.rowCount === 0) {
         return response.status(404).json({ error: `task_user with id ${taskUserId} not found`});
       }
