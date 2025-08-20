@@ -18,7 +18,7 @@ const UserFront = ({ login, setLogin }) => {
     taskService.getUserTasks()
       .then(result => {
         if (result.status === 200) {
-          setTasks(result.data);  // assuming tasks are in result.data
+          setTasks(result.data.sort((a, b) => a.task_id - b.task_id));  // assuming tasks are in result.data
         }
         else if (result.status === 401) {
           setLogin(!login)

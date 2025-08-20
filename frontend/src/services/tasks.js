@@ -36,7 +36,10 @@ const getNewTaskStatus = (currentStatus, admin_approval) => {
     const nonAdmin = {
         done: "not_done",
         not_done: "done",
+        requesting: "not_done",
+        rejected: "done",
     }
+
     if (admin_approval) {
         return admin[currentStatus]
     }

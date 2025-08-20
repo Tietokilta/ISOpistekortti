@@ -87,7 +87,7 @@ module.exports = (adminRouter) => {
     try {
       const result = await pool.query(`
         SELECT u.id AS user_id, u.username, u.name, 
-               t.id AS task_id, t.title AS task_title
+               t.id AS task_id, t.title AS task_title,
                tu.id AS task_user_id
         FROM users u
         INNER JOIN task_user tu
