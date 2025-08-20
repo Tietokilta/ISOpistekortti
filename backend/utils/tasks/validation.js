@@ -41,14 +41,27 @@ function isValidStatusChange(task_info, new_status) {
     }
 
     // rejected acts the same as not done, so fall through
-    case consts.TASK_STATUS.REJECTED:
+    case consts.TASK_STATUS.REJECTED: {
+      if (task_info.needs_admin_approval) {
+        error.message = "Cannot change status of a rejected task which needs admin approval";
+        throw error;
+      }
+
+      if (new_status !== consts.TASK_STATUS.DONE) {
+        error.message = "Cannot set a rejected task which doesn't need admin approval to anything but 'done'";
+        throw error;
+      }
+
+      break;
+    }
+
     case consts.TASK_STATUS.NOT_DONE: {
       if (task_info.needs_admin_approval && new_status !== consts.TASK_STATUS.REQUESTING) {
-        error.message = "A not_done or rejected task which requires admin approval can only be set to 'requesting'";
+        error.message = "A not_done task which requires admin approval can only be set to 'requesting'";
         throw error;
 
       } else if (!task_info.needs_admin_approval && new_status !== consts.TASK_STATUS.DONE) {
-        error.message = "A not_done or rejected task which doesn't require admin approval can only be set to 'done'";
+        error.message = "A not_done task which doesn't require admin approval can only be set to 'done'";
         throw error;
       }
 
