@@ -41,15 +41,14 @@ function EditableField({ name, user, setUsers, users, updatedParam, task, tasks,
         console.log('New value:', inputValue);
         if (user) {
             console.log({ ...user, [updatedParam]: inputValue })
-            //setUser({ ...user, [updatedParam]: inputValue })
 
             const result = await adminService.updateUser({ ...user, [updatedParam]: inputValue })
-            if (result.status == 201) {
+            if (result.status == 200) {
                 var filtered = users.filter(function (value) {
                     return value.id != user.id;
                 })
                 filtered.push({ ...user, [updatedParam]: inputValue })
-                setUsers(filtered)//.sort((a, b) => a.id - b.id))
+                setUsers(filtered)
                 setIsEditing(false);
             }
             else {
@@ -153,14 +152,12 @@ function TogglableField({ task, tasks, setTasks, field }) {
 const AcceptButton = ({ user, task_users, setTask_users }) => {
     const handleSubmit = async (bool) => {
         const result = await adminService.handleRequestedTask(bool, user)
-        console.log("res:", result)
-        return
-        if (result.status == 201) {
-            var filtered = tasks.filter(function (value) {
-                return value.id != task.id;
+        console.log(user)
+        if (result.status == 200) {
+            var filtered = task_users.filter(function (value) {
+                return value.task_user_id != user.task_user_id;
             })
-            filtered.push({ ...task, 'needs_admin_approval': !task.needs_admin_approval })
-            setTasks(filtered.sort((a, b) => a.id - b.id))
+            setTask_users(filtered.sort((a, b) => a.task_user_id - b.task_user_id))
         }
         else {
             console.log(result)
@@ -417,7 +414,7 @@ export function AdminFront({ setLogin }) {
             .then(result => {
                 if (result.status === 200) {
                     //console.log("users:", result.data.users)
-                    setUsers(result.data.users)
+                    setUsers(result.data.users.sort((a, b) => a.completed_tasks - b.completed_tasks))
                 }
             })
             .catch(error => {

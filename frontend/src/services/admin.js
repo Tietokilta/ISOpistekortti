@@ -65,9 +65,9 @@ const getUsers = async () => {
 }
 
 const updateUser = async (user) => {
-    const data = { ...user, user_id: user.id }
+    const data = { ...user, user_id: user.id, is_admin: user.is_admin === "true" }
     try {
-        const request = await axios.put(baseUrl + '/users', data)
+        const request = await axios.put(baseUrl + '/users/' + user.id, data)
         console.log("users", request.data)
         return request
     }
@@ -97,12 +97,14 @@ const handleRequestedTask = async (accepted, user) => {
     try {
         if (accepted) {
             const request = await axios.patch(baseUrl + '/task_user/' + user.task_user_id, { new_task_status: "done" })
+            return request
         }
         else {
             const request = await axios.patch(baseUrl + '/task_user/' + user.task_user_id, { new_task_status: "rejected" })
+            return request
         }
         
-        return request
+        
     }
     catch (error) {
         return error.request?.status;
