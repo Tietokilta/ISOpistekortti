@@ -1,4 +1,4 @@
-const { getAllUsersAndCompletedTasks, changeUsername, changePassword } = require("../../utils/users/userService");
+const { getAllUsersAndCompletedTasks, changeUserData, changePassword } = require("../../utils/users/userService");
 const errors = require("../../utils/errors");
 
 function isValidInt(val) {
@@ -18,7 +18,7 @@ module.exports = (adminRouter) => {
     }
   });
 
-  adminRouter.post('/users/:userId/username', async (request, response) => {
+  adminRouter.put('/users/:userId', async (request, response) => {
     if (!isValidInt(request.params.userId)) {
       return response.status(400).json({ error: "Provided user id is not an integer"});
     }
@@ -29,15 +29,15 @@ module.exports = (adminRouter) => {
       return response.status(400).json({error: "Request doesn't have a body"});
     }
 
-    const newUsername = body.username;
-    if (newUsername == null) {
-      console.log("Request did not have a username");
-      return response.status(400).json({error: "Request does not have a username"});
+    const { name, username, is_admin } = body;
+
+    if (name == null || username == null || is_admin == null) {
+      return response.status(400).json({ error: "Request body missing either 'name', 'username', or 'is_admin'" });
     }
 
     try {
-      await changeUsername(request.params.userId, newUsername);
-      return response.status(200).json({ message: "Username changed successfully", });
+      await changeUserData(request.params.userId, name, username, is_admin);
+      return response.status(200).json({ message: "User updated successfully", user: { name, username, is_admin }, });
 
     } catch (error) {
       if (error instanceof errors.ValidationError) {
