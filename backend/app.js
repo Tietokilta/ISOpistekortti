@@ -1,5 +1,7 @@
 const express = require('express')
 require('express-async-errors')
+const crypto = require("crypto");
+const fs = require("fs");
 const app = express()
 const path = require("path");
 const cors = require('cors')
@@ -39,10 +41,25 @@ const frontendPath = process.env.FRONTEND_PATH
   ? path.resolve(process.env.FRONTEND_PATH)
   : path.resolve(__dirname, "../frontend/dist");
 
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, {
+  index: false,
+}));
 
-app.get("*", (req, res) => {
-  return res.sendFile(path.join(frontendPath, "index.html"));
+// Manually calculate ETag for index.html so that the browser
+// doesn't incorrectly use a cached version because the default
+// ETag is weak
+const indexPath = path.join(frontendPath, "index.html");
+const indexBuffer = fs.readFileSync(indexPath);
+const indexETag = crypto.createHash("sha256").update(indexBuffer).digest("hex");
+
+app.get("*", (req, res, next) => {
+  // Only return index if the request is asking for an html file, otherwise
+  // forward it to next
+  const acceptedTypes = req.headers.accept || "";
+  if (!acceptedTypes.includes("text/html")) return next();
+  
+  res.setHeader("ETag", indexETag);
+  return res.sendFile(indexPath);
 });
 
 app.use(middleWare.unknownEndpoint)
