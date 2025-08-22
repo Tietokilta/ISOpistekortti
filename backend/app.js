@@ -53,11 +53,6 @@ const indexBuffer = fs.readFileSync(indexPath);
 const indexETag = crypto.createHash("sha256").update(indexBuffer).digest("hex");
 
 app.get("*", (req, res, next) => {
-  // Only return index if the request is asking for an html file, otherwise
-  // forward it to next
-  const acceptedTypes = req.headers.accept || "";
-  if (!acceptedTypes.includes("text/html")) return next();
-  
   res.setHeader("ETag", indexETag);
   return res.sendFile(indexPath);
 });
