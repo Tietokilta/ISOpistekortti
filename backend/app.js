@@ -1,6 +1,7 @@
 const express = require('express')
 require('express-async-errors')
 const crypto = require("crypto");
+const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 const app = express()
 const path = require("path");
@@ -17,6 +18,12 @@ const signupRouter = require('./controllers/auth/signup')
 const logoutRouter = require('./controllers/auth/logout')
 const adminRouter = require('./controllers/admin');
 
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 min
+  max: 50,
+});
+
+app.use(limiter)
 app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
