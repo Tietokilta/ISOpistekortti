@@ -20,7 +20,7 @@ const adminRouter = require('./controllers/admin');
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 min
-  max: 50,
+  max: 150,
 });
 
 app.use(limiter)
