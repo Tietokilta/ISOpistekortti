@@ -12,7 +12,7 @@
 //tarvitaanko listat usereista (ja taskusereista) ja taskeista
 //lisää tapa nähdä aiemmin hyväksytyt tehtävät
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { Logout } from "./Logout"
 import { AddTask } from "./AddTask.jsx"
 import { ResetPassword } from './ResetPassword.jsx'
@@ -280,6 +280,21 @@ const AcceptingCard = ({ user, task_users, setTask_users }) => {
 
 const UserCard = ({ user, users, setUsers, }) => {
     const [isOpen, setIsOpen] = useState(false)
+    const [userTasks, setUserTasks] = useState([])
+
+    //get tasks for user when the user card is open
+    useEffect(() => {
+        adminService.getUserTasks(user.id)
+            .then(result => {
+                if (result.status === 200) {
+                    console.log(result.data.task_users[0])
+                    setUserTasks(result.data.task_users)
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }, [])
 
     return (
         <div className="bg-gray-400 p-4 rounded-2xl shadow-lg w-1/1 mb-4">
@@ -328,8 +343,11 @@ const UserCard = ({ user, users, setUsers, }) => {
                     <ResetPassword id={user.id} />
 
                     <p><b>Has completed {user.completed_tasks} task(s)</b></p>
-                    <li>task1: done</li>
-                    <li>task2: not_done</li>
+                    {userTasks.map((task_user, index) => (
+                        <li key={index}>
+                            {task_user.title} {task_user.status === "done" ? "✅" : "❌"}
+                        </li>
+                    ))}
                 </div>
             )}
         </div>
@@ -414,7 +432,7 @@ export function AdminFront({ setLogin }) {
             .then(result => {
                 if (result.status === 200) {
                     //console.log("users:", result.data.users)
-                    setUsers(result.data.users.sort((a, b) => a.completed_tasks - b.completed_tasks))
+                    setUsers(result.data.users.sort((a, b) => b.completed_tasks - a.completed_tasks))
                 }
             })
             .catch(error => {
@@ -423,7 +441,7 @@ export function AdminFront({ setLogin }) {
         adminService.getTaskUsers()
             .then(result => {
                 if (result.status === 200) {
-                    console.log(result.data.requested_tasks)
+                    //  console.log(result.data.requested_tasks)
                     setTask_users(result.data.requested_tasks)
                 }
             })

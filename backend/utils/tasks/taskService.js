@@ -55,11 +55,14 @@ const getTasks = async () => {
   `);
 };
 
+// task user ja join silleen et saa task nimen
+
 const getTaskUsersForUser = async (userId) => {
   return await pool.query(`
     SELECT *
     FROM task_user
-    WHERE user_id = $1
+    INNER JOIN tasks ON task_user.task_id = tasks.id
+    WHERE user_id = $1 
     ORDER BY task_id
   `, [userId]);
 };
