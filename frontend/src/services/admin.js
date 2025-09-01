@@ -102,12 +102,22 @@ const handleRequestedTask = async (accepted, user) => {
             const request = await axios.patch(baseUrl + '/task_user/' + user.task_user_id, { new_task_status: "rejected" })
             return request
         }
-        
-        
+
+
     }
     catch (error) {
         return error.request?.status;
     }
 }
 
-export default { getTasks, updateTask, createTask, deleteTask, getUsers, updateUser, resetPassword, getTaskUsers, handleRequestedTask }
+const getUserTasks = async (id) => {
+    try {
+        const resp = await axios.get(baseUrl + '/task_user/' + id)
+        return resp
+    }
+    catch (error) {
+        return error.request?.status;
+    }
+}
+
+export default { getTasks, updateTask, createTask, deleteTask, getUsers, updateUser, resetPassword, getTaskUsers, handleRequestedTask, getUserTasks }
