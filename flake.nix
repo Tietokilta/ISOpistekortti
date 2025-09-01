@@ -3,6 +3,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       ...
     }@inputs:
@@ -21,14 +22,15 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
-        rec {
+        {
+          default = self.packages.${system}.isopistekortti;
           isopistekortti = pkgs.callPackage ./package.nix { };
           docker = pkgs.dockerTools.buildLayeredImage {
             name = "isopistekortti";
             tag = "latest";
 
             config = {
-              Cmd = [ "${lib.getExe isopistekortti}" ];
+              Cmd = [ "${lib.getExe self.packages.${system}.isopistekortti}" ];
               Env = [
                 "PGSSLROOTCERT=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
               ];
