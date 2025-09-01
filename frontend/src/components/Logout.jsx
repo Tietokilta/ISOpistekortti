@@ -10,7 +10,7 @@ export function Logout({ setLogin }) {
 
   const handleLogout = async () => {
     await logoutService.logoutPost()
-    console.log('User logged out');
+    // console.log('User logged out');
     setLogin(true);
   }
 
@@ -21,7 +21,7 @@ export function Logout({ setLogin }) {
         if (result.status === 200) {
           // assuming tasks are in result.data
           setLogin(true)
-          console.log("success")
+          // console.log("success")
         }
         else if (result.status === 422) {
           console.warn('Unexpected status:', result.status);
