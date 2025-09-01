@@ -23,6 +23,8 @@ const limiter = rateLimit({
   max: 150,
 });
 
+app.set("trust proxy", 1)
+
 app.use(limiter)
 app.use(cors())
 app.use(express.json())
