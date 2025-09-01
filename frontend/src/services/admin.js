@@ -29,7 +29,7 @@ const updateTask = async (task) => {
 }
 
 const createTask = async (task) => {
-    console.log(task)
+    // console.log(task)
     try {
         const request = await axios.post(baseUrl + '/tasks', task)
         //console.log(request)
@@ -43,7 +43,7 @@ const createTask = async (task) => {
 
 const deleteTask = async (task) => {
     try {
-        console.log(task)
+        // console.log(task)
         const request = await axios.delete(baseUrl + '/tasks/' + task.id)
         return request
     }
@@ -67,7 +67,7 @@ const updateUser = async (user) => {
     const data = { ...user, user_id: user.id, is_admin: user.is_admin === "true" }
     try {
         const request = await axios.put(baseUrl + '/users/' + user.id, data)
-        console.log("users", request.data)
+        // console.log("users", request.data)
         return request
     }
     catch (error) {

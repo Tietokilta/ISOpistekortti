@@ -3,7 +3,7 @@ const baseUrl = '/api/logout'
 
 const logoutPost = async () => {
     const request = await axios.post(baseUrl, {})
-    console.log(request)
+    // console.log(request)
     return request
 }
 

@@ -152,7 +152,7 @@ function TogglableField({ task, tasks, setTasks, field }) {
 const AcceptButton = ({ user, task_users, setTask_users }) => {
     const handleSubmit = async (bool) => {
         const result = await adminService.handleRequestedTask(bool, user)
-        console.log(user)
+        // console.log(user)
         if (result.status == 200) {
             var filtered = task_users.filter(function (value) {
                 return value.task_user_id != user.task_user_id;
@@ -192,7 +192,7 @@ const TaskCard = ({ task, tasks, setTasks }) => {
 
     const deleteTask = async (task) => {
         const result = await adminService.deleteTask(task)
-        console.log(result)
+        // console.log(result)
         if (result.status == 200) {
             var filtered = tasks.filter(function (value) {
                 return value.id != task.id;
@@ -287,7 +287,6 @@ const UserCard = ({ user, users, setUsers, }) => {
         adminService.getUserTasks(user.id)
             .then(result => {
                 if (result.status === 200) {
-                    console.log(result.data.task_users[0])
                     setUserTasks(result.data.task_users)
                 }
             })

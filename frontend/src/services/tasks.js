@@ -19,7 +19,7 @@ const getUserTasks = async () => {
 }
 
 const postUserTask = async (data) => {
-    console.log(data)
+    // console.log(data)
     const request = await axios.post(taskUserBase, data)
     return request.status
 }
