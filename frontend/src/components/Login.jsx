@@ -2,10 +2,11 @@ import { useState } from 'react'
 import loginService from '../services/login'
 import userService from '../services/users'
 
-const Button = ({ name, state, setState }) => {
+const Button = ({ name, callable, submit = false }) => {
     return (
-        <button className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
-            onClick={() => { setState(!state) }}>{name}</button>
+        <button type={submit ? "submit" : "button"}
+            className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
+            onClick={callable}>{name}</button>
     )
 }
 
@@ -81,8 +82,8 @@ const Login = ({ login, setLogin, setUser }) => {
                 <h1 className="flex items-center justify-center font-bold">Login or create a user</h1>
 
                 <div className="flex items-center justify-center mt-6">
-                    <Button name='Login' state={loginForm} setState={setLoginForm} />
-                    <Button name='Create user' state={register} setState={setRegister} />
+                    <Button name='Login' callable={() => setLoginForm(true)} />
+                    <Button name='Create user' callable={() => setRegister(true)} />
                 </div>
             </div>
         )
@@ -90,7 +91,7 @@ const Login = ({ login, setLogin, setUser }) => {
     else if (loginForm) {
         //console.log(notification)
         return (
-            <div className="p-6 rounded-2xl shadow-lg w-80 bg-white ">
+            <form action={handleLogin} className="p-6 rounded-2xl shadow-lg w-80 bg-white ">
                 <h1 className='flex items-center justify-center font-bold'>LOGIN</h1>
                 <div className='flex items-center justify-center'>
                     <div>
@@ -102,16 +103,15 @@ const Login = ({ login, setLogin, setUser }) => {
                     </div>
                 </div>
                 <div className='flex items-center justify-center'>
-                    <Button name='Back' state={loginForm} setState={setLoginForm} />
-                    <button className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
-                        onClick={() => handleLogin()}>Ok</button>
+                    <Button name="Back" callable={() => setLoginForm(false)} />
+                    <Button name="Ok" submit={true} />
                 </div>
-            </div>
+            </form>
         )
     }
     else if (register) {
         return (
-            <div className="p-6 rounded-2xl shadow-lg w-80 bg-white mb-4">
+            <form action={handleRegister} className="p-6 rounded-2xl shadow-lg w-80 bg-white mb-4">
                 <h1 className="flex items-center justify-center font-bold">Create user</h1>
                 <div className='flex items-center justify-center'>
                     <div>
@@ -127,11 +127,10 @@ const Login = ({ login, setLogin, setUser }) => {
                     </div>
                 </div>
                 <div className='flex items-center justify-center'>
-                    <Button name='Back' state={register} setState={setRegister} />
-                    <button className="mr-4 mt-4 bg-blue-400 hover:bg-blue-500 border rounded-2xl padding-2 p-1"
-                        onClick={() => handleRegister()}>Ok</button>
+                    <Button name="Back" callable={() => setRegister(false)} />
+                    <Button name="Ok" submit={true} />
                 </div>
-            </div>
+            </form>
         )
     }
 }
